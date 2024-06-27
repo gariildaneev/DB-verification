@@ -10,6 +10,7 @@ OPTIONS = {
         'CFBundleShortVersionString': '0.1.0',
         'LSUIElement': True,
     },
+    'excludes': ['PyQt5.QtSql', 'PyQt5', 'PyInstaller.hooks.hook-PyQt5.QtSql']
 }
 
 setup(
