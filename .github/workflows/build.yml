@@ -31,6 +31,7 @@ jobs:
           pip install pandas openpyxl pyinstaller
           if [ "${{ matrix.os }}" = "macos-latest" ]; then
             pip install py2app
+            pip install --use-pep517 wheel
           fi
 
       - name: Install dependencies (Windows)
