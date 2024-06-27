@@ -46,11 +46,11 @@ jobs:
 
       - name: Build executable (Windows)
         if: runner.os == 'Windows'
-        run: pyinstaller --onefile --windowed --icon=assets/icon.ico validate_kks_gui.py
+        run: pyinstaller --onefile --windowed --icon=assets/icon.ico DB_script.py
 
       - name: Build executable (Linux)
         if: runner.os == 'Linux'
-        run: pyinstaller --onefile --windowed validate_kks_gui.py
+        run: pyinstaller --onefile --windowed DB_script.py
 
       - name: Upload artifact (Linux)
         if: runner.os == 'Linux'
