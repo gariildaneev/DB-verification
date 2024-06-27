@@ -28,21 +28,20 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           python -m pip install --upgrade pip
-          pip install pandas openpyxl pyinstaller
+          pip install --use-pep517 pandas openpyxl pyinstaller
           if [ "${{ matrix.os }}" = "macos-latest" ]; then
-            pip install py2app wheel
+            pip install --use-pep517 py2app wheel
           fi
 
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
           python -m pip install --upgrade pip
-          pip install pandas openpyxl pyinstaller
+          pip install --use-pep517 pandas openpyxl pyinstaller
 
       - name: Build executable (macOS)
         if: runner.os == 'macOS'
-        run: |
-          python setup.py py2app
+        run: python setup.py py2app
 
       - name: Build executable (Windows)
         if: runner.os == 'Windows'
