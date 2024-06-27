@@ -3,12 +3,13 @@ from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Font
 import re
-import argparse
+import tkinter as tk
+from tkinter import filedialog, messagebox
 
 def contains_cyrillic(text):
     return bool(re.search('[а-яА-Я]', text))
 
-def main(input_file, output_file):
+def validate_kks(input_file, output_file):
     # Чтение данных из Excel файла
     df = pd.read_excel(input_file)
 
@@ -49,11 +50,33 @@ def main(input_file, output_file):
     # Сохранение файла
     wb.save(output_file)
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Validate KKS column in Excel file.")
-    parser.add_argument("input_file", help="Path to the input Excel file")
-    parser.add_argument("output_file", help="Path to the output Excel report file")
-    args = parser.parse_args()
-    
-    main(args.input_file, args.output_file)
+def select_file():
+    input_file = filedialog.askopenfilename(
+        title="Выберите файл",
+        filetypes=[("Excel files", "*.xlsx *.xls")]
+    )
+    if input_file:
+        output_file = filedialog.asksaveasfilename(
+            title="Сохранить отчет как",
+            defaultextension=".xlsx",
+            filetypes=[("Excel files", "*.xlsx")]
+        )
+        if output_file:
+            try:
+                validate_kks(input_file, output_file)
+                messagebox.showinfo("Успех", "Отчет успешно создан!")
+            except Exception as e:
+                messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
 
+def create_gui():
+    root = tk.Tk()
+    root.title("Проверка базы данных")
+    root.geometry("300x150")
+
+    btn_select_file = tk.Button(root, text="Выбрать файл", command=select_file)
+    btn_select_file.pack(expand=True)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    create_gui()
