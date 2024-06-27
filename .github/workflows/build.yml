@@ -24,27 +24,50 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install dependencies
+      - name: Install dependencies (Linux & macOS)
+        if: runner.os != 'Windows'
         run: |
           python -m pip install --upgrade pip
           pip install pandas openpyxl pyinstaller
-          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+          if [ "${{ matrix.os }}" = "macos-latest" ]; then
             pip install py2app
           fi
-        shell: bash
 
-      - name: Build executable
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
         run: |
-          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-            python setup.py py2app
-          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            pyinstaller --onefile --windowed --icon=assets/icon.ico DB_script.py
-          else
-            pyinstaller --onefile --windowed DB_script.py
-        shell: bash
+          python -m pip install --upgrade pip
+          pip install pandas openpyxl pyinstaller
 
-      - name: Upload artifact
+      - name: Build executable (macOS)
+        if: runner.os == 'macOS'
+        run: python setup.py py2app
+
+      - name: Build executable (Windows)
+        if: runner.os == 'Windows'
+        run: pyinstaller --onefile --windowed --icon=assets/icon.ico validate_kks_gui.py
+
+      - name: Build executable (Linux)
+        if: runner.os == 'Linux'
+        run: pyinstaller --onefile --windowed validate_kks_gui.py
+
+      - name: Upload artifact (Linux)
+        if: runner.os == 'Linux'
         uses: actions/upload-artifact@v2
         with:
-          name: executable-${{ matrix.os }}
+          name: executable-linux
+          path: dist/
+
+      - name: Upload artifact (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v2
+        with:
+          name: executable-windows
+          path: dist/
+
+      - name: Upload artifact (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v2
+        with:
+          name: executable-macos
           path: dist/
