@@ -30,8 +30,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas openpyxl pyinstaller
           if [ "${{ matrix.os }}" = "macos-latest" ]; then
-            pip install py2app
-            pip install --use-pep517 wheel
+            pip install py2app wheel
           fi
 
       - name: Install dependencies (Windows)
@@ -42,15 +41,16 @@ jobs:
 
       - name: Build executable (macOS)
         if: runner.os == 'macOS'
-        run: python setup.py py2app
+        run: |
+          python setup.py py2app
 
       - name: Build executable (Windows)
         if: runner.os == 'Windows'
-        run: pyinstaller --onefile --windowed --icon=assets/icon.ico DB_script.py
+        run: pyinstaller --onefile --windowed --icon=assets/icon.ico validate_kks_gui.py
 
       - name: Build executable (Linux)
         if: runner.os == 'Linux'
-        run: pyinstaller --onefile --windowed DB_script.py
+        run: pyinstaller --onefile --windowed validate_kks_gui.py
 
       - name: Upload artifact (Linux)
         if: runner.os == 'Linux'
