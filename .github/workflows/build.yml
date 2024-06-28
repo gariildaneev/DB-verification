@@ -27,7 +27,7 @@ jobs:
           pip install pandas openpyxl pyinstaller
 
       - name: Build executable
-        run: pyinstaller --onefile --icon=assets/icon.ico DB_script.spec
+        run: pyinstaller DB_script.spec
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
