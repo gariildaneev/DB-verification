@@ -44,3 +44,10 @@ coll = COLLECT(
     upx_exclude=[],
     name='DB_script'
 )
+
+app = BUNDLE(
+    coll,
+    name='DB_script.app',
+    icon='assets/icon.ico',
+    bundle_identifier=None
+)
