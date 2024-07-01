@@ -7,7 +7,7 @@ a = Analysis(
     ['DB_script.py'],
     pathex=['.'],
     binaries=[],
-    datas=[],
+    datas=[('assets/icon.ico', 'assets')],
     hiddenimports=[],
     hookspath=[],
     runtime_hooks=[],
