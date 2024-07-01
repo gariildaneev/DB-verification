@@ -1,4 +1,3 @@
-# DB_script.spec
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
@@ -8,7 +7,7 @@ a = Analysis(
     pathex=['.'],
     binaries=[],
     datas=[('assets/icon.ico', 'assets')],
-    hiddenimports=[],
+    hiddenimports=['pandas', 'xlsxwriter'],
     hookspath=[],
     runtime_hooks=[],
     excludes=[],
@@ -16,6 +15,7 @@ a = Analysis(
     win_private_assemblies=False,
     cipher=block_cipher,
 )
+
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 exe = EXE(
@@ -30,8 +30,8 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
-    icon='assets/icon.ico',  # Убедитесь, что путь указан правильно
+    console=True,
+    icon='assets/icon.ico',
 )
 
 coll = COLLECT(
@@ -43,11 +43,4 @@ coll = COLLECT(
     upx=True,
     upx_exclude=[],
     name='DB_script'
-)
-
-app = BUNDLE(
-    coll,
-    name='DB_script.app',
-    icon='assets/icon.ico',
-    bundle_identifier=None
 )
