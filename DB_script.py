@@ -89,7 +89,7 @@ def create_gui():
     root.geometry("300x200")
 
     # Установка иконки для основного окна
-    root.iconbitmap('icon.ico')
+    root.iconbitmap('./_internal/assets/icon.ico')
 
     global check_unique, check_cyrillic
     check_unique = tk.BooleanVar()
