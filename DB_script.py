@@ -1,13 +1,38 @@
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
-from openpyxl.styles import Font
+from openpyxl.styles import Font, PatternFill
 import re
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
 def contains_cyrillic(text):
     return bool(re.search('[а-яА-Я]', text))
+
+def highlight_cyrillic(cell):
+    text = cell.value
+    if not text:
+        return
+
+    parts = re.split(r'([а-яА-Я])', text)  # Разбить текст на части, включая кириллические символы
+    new_text = ""
+    for part in parts:
+        if contains_cyrillic(part):
+            new_text += f"<cyrillic>{part}</cyrillic>"
+        else:
+            new_text += part
+    
+    # Заменяем содержимое ячейки на новое
+    cell.value = new_text
+    
+    # Применяем стили
+    run = cell._element.xpath(".//r")
+    for r in run:
+        if "<cyrillic>" in r.text:
+            r.text = r.text.replace("<cyrillic>", "")
+            r.text = r.text.replace("</cyrillic>", "")
+            rPr = r.get_or_add_rPr()
+            rPr.append(PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid"))  # Выделить желтым цветом
 
 def validate_kks(input_file, output_file, check_unique, check_cyrillic):
     df = pd.read_excel(input_file)
@@ -34,7 +59,9 @@ def validate_kks(input_file, output_file, check_unique, check_cyrillic):
 
         for r_idx, r in enumerate(dataframe_to_rows(cyrillic_rows, index=False, header=True), start=3):
             for c_idx, value in enumerate(r, start=1):
-                ws_cyrillic.cell(row=r_idx, column=c_idx, value=value)
+                cell = ws_cyrillic.cell(row=r_idx, column=c_idx, value=value)
+                if c_idx == 3:  # Предполагается, что колонка 'KKS' первая
+                    highlight_cyrillic(cell)
 
     wb.save(output_file)
 
@@ -60,6 +87,9 @@ def create_gui():
     root = tk.Tk()
     root.title("Проверка базы данных")
     root.geometry("300x200")
+
+    # Установка иконки для основного окна
+    root.iconbitmap('assets/icon.ico')
 
     global check_unique, check_cyrillic
     check_unique = tk.BooleanVar()
