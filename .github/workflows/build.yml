@@ -18,11 +18,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller pandas xlsxwriter openpyxl
+        pip install pyinstaller pandas xlsxwriter
 
     - name: Build executable
       run: |
-        pyinstaller --onefile DB_script.spec
+        pyinstaller DB_script.spec
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
