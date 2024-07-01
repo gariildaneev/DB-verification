@@ -1,55 +1,59 @@
 import pandas as pd
-from openpyxl import Workbook
-from openpyxl.utils.dataframe import dataframe_to_rows
-from openpyxl.styles import Font, PatternFill
+import xlsxwriter
 import re
 import tkinter as tk
 from tkinter import filedialog, messagebox
+import os
+import sys
 
 def contains_cyrillic(text):
     return bool(re.search('[а-яА-Я]', text))
 
-def highlight_cyrillic(cell):
-    text = str(cell.value)
-    highlighted_text = ""
+def highlight_cyrillic(text):
+    highlighted = []
     for char in text:
         if contains_cyrillic(char):
-            highlighted_text += f'({char})'  # Используем скобки для обозначения кириллических букв
+            highlighted.append((char, True))
         else:
-            highlighted_text += char
-    return highlighted_text
+            highlighted.append((char, False))
+    return highlighted
+
+def write_highlighted_text(ws, row, col, text, highlight_format):
+    highlighted_text = highlight_cyrillic(text)
+    for i, (char, is_cyrillic) in enumerate(highlighted_text):
+        if is_cyrillic:
+            ws.write(row, col + i, char, highlight_format)
+        else:
+            ws.write(row, col + i, char)
 
 def validate_kks(input_file, output_file, check_unique, check_cyrillic):
     df = pd.read_excel(input_file)
-    wb = Workbook()
+
+    writer = pd.ExcelWriter(output_file, engine='xlsxwriter')
+    workbook = writer.book
 
     if check_unique:
         duplicates = df[df.duplicated(subset=['KKS'], keep=False)]
-        ws_duplicates = wb.active
-        ws_duplicates.title = "Отчет о дубликатах"
-        ws_duplicates['A1'] = "Значение KKS не уникально"
-        ws_duplicates['A1'].font = Font(size=14, bold=True)
-
-        for r_idx, r in enumerate(dataframe_to_rows(duplicates, index=False, header=True), start=3):
-            for c_idx, value in enumerate(r, start=1):
-                ws_duplicates.cell(row=r_idx, column=c_idx, value=value)
+        duplicates.to_excel(writer, sheet_name='Отчет о дубликатах', index=False)
+        worksheet_duplicates = writer.sheets['Отчет о дубликатах']
+        worksheet_duplicates.write(0, 0, "Значение KKS не уникально")
 
     if check_cyrillic:
         cyrillic_rows = df[df['KKS'].apply(contains_cyrillic)]
-        ws_cyrillic = wb.create_sheet(title="Отчет о кириллице")
-        ws_cyrillic['A1'] = "Значение KKS содержит кириллицу"
-        ws_cyrillic['A1'].font = Font(size=14, bold=True)
+        cyrillic_rows.to_excel(writer, sheet_name='Отчет о кириллице', index=False)
+        worksheet_cyrillic = writer.sheets['Отчет о кириллице']
+        worksheet_cyrillic.write(0, 0, "Значение KKS содержит кириллицу")
 
-        for r_idx, r in enumerate(dataframe_to_rows(cyrillic_rows, index=False, header=True), start=3):
-            for c_idx, value in enumerate(r, start=1):
-                cell = ws_cyrillic.cell(row=r_idx, column=c_idx, value=value)
-                if contains_cyrillic(str(cell.value)):
-                    highlighted_text = highlight_cyrillic(cell)
-                    cell.value = highlighted_text
-                    cell.font = Font(color="FF0000")  # Выделение красным цветом
-                    cell.fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")  # Желтый фон
+        highlight_format = workbook.add_format({'font_color': 'red', 'bg_color': 'yellow'})
 
-    wb.save(output_file)
+        for row_num, row_data in enumerate(cyrillic_rows.values, start=1):
+            for col_num, cell_value in enumerate(row_data):
+                if col_num == 2:  # Предполагаем, что KKS в первом столбце
+                    write_highlighted_text(worksheet_cyrillic, row_num + 1, col_num, str(cell_value), highlight_format)
+                else:
+                    worksheet_cyrillic.write(row_num + 1, col_num, cell_value)
+
+    writer.save()
 
 def select_file():
     input_file = filedialog.askopenfilename(
@@ -94,3 +98,5 @@ def create_gui():
 
 if __name__ == "__main__":
     create_gui()
+
+
