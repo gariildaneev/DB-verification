@@ -10,29 +10,14 @@ def contains_cyrillic(text):
     return bool(re.search('[а-яА-Я]', text))
 
 def highlight_cyrillic(cell):
-    text = cell.value
-    if not text:
-        return
-
-    parts = re.split(r'([а-яА-Я])', text)  # Разбить текст на части, включая кириллические символы
-    new_text = ""
-    for part in parts:
-        if contains_cyrillic(part):
-            new_text += f"<cyrillic>{part}</cyrillic>"
+    text = str(cell.value)
+    highlighted_text = ""
+    for char in text:
+        if contains_cyrillic(char):
+            highlighted_text += f'({char})'  # Используем скобки для обозначения кириллических букв
         else:
-            new_text += part
-    
-    # Заменяем содержимое ячейки на новое
-    cell.value = new_text
-    
-    # Применяем стили
-    run = cell._element.xpath(".//r")
-    for r in run:
-        if "<cyrillic>" in r.text:
-            r.text = r.text.replace("<cyrillic>", "")
-            r.text = r.text.replace("</cyrillic>", "")
-            rPr = r.get_or_add_rPr()
-            rPr.append(PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid"))  # Выделить желтым цветом
+            highlighted_text += char
+    return highlighted_text
 
 def validate_kks(input_file, output_file, check_unique, check_cyrillic):
     df = pd.read_excel(input_file)
@@ -48,8 +33,6 @@ def validate_kks(input_file, output_file, check_unique, check_cyrillic):
         for r_idx, r in enumerate(dataframe_to_rows(duplicates, index=False, header=True), start=3):
             for c_idx, value in enumerate(r, start=1):
                 ws_duplicates.cell(row=r_idx, column=c_idx, value=value)
-    else:
-        wb.remove(wb.active)
 
     if check_cyrillic:
         cyrillic_rows = df[df['KKS'].apply(contains_cyrillic)]
@@ -60,8 +43,11 @@ def validate_kks(input_file, output_file, check_unique, check_cyrillic):
         for r_idx, r in enumerate(dataframe_to_rows(cyrillic_rows, index=False, header=True), start=3):
             for c_idx, value in enumerate(r, start=1):
                 cell = ws_cyrillic.cell(row=r_idx, column=c_idx, value=value)
-                if c_idx == 3:  # Предполагается, что колонка 'KKS' первая
-                    highlight_cyrillic(cell)
+                if contains_cyrillic(str(cell.value)):
+                    highlighted_text = highlight_cyrillic(cell)
+                    cell.value = highlighted_text
+                    cell.font = Font(color="FF0000")  # Выделение красным цветом
+                    cell.fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")  # Желтый фон
 
     wb.save(output_file)
 
@@ -78,7 +64,7 @@ def select_file():
         )
         if output_file:
             try:
-                validate_kks(input_file, output_file, check_unique.get(), check_cyrillic.get())
+                validate_kks(input_file, output_file, var_unique.get(), var_cyrillic.get())
                 messagebox.showinfo("Успех", "Отчет успешно создан!")
             except Exception as e:
                 messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
@@ -91,18 +77,18 @@ def create_gui():
     # Установка иконки для основного окна
     root.iconbitmap('./_internal/assets/icon.ico')
 
-    global check_unique, check_cyrillic
-    check_unique = tk.BooleanVar()
-    check_cyrillic = tk.BooleanVar()
+    global var_unique, var_cyrillic
+    var_unique = tk.BooleanVar()
+    var_cyrillic = tk.BooleanVar()
 
-    chk_unique = tk.Checkbutton(root, text="Проверка уникальности KKS", variable=check_unique)
-    chk_unique.pack(pady=5)
+    chk_unique = tk.Checkbutton(root, text="Проверка на уникальность", variable=var_unique)
+    chk_cyrillic = tk.Checkbutton(root, text="Проверка на кириллицу", variable=var_cyrillic)
 
-    chk_cyrillic = tk.Checkbutton(root, text="Проверка на кириллицу", variable=check_cyrillic)
-    chk_cyrillic.pack(pady=5)
+    chk_unique.pack()
+    chk_cyrillic.pack()
 
     btn_select_file = tk.Button(root, text="Выбрать файл", command=select_file)
-    btn_select_file.pack(pady=20)
+    btn_select_file.pack(expand=True)
 
     root.mainloop()
 
