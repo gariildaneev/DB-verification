@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from validator import validate_kks
+import os
 
 def create_gui():
     root = tk.Tk()
