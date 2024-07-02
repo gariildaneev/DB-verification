@@ -3,7 +3,7 @@
 block_cipher = None
 
 a = Analysis(
-    ['DB_script.py'],
+    ['main.py'],
     pathex=['.'],
     binaries=[],
     datas=[('assets/icon.ico', 'assets')],
