@@ -37,7 +37,9 @@ def create_gui():
     btn_select_file = tk.Button(root, text="Выбрать файл", command=on_select_file)
     btn_select_file.pack(expand=True)
 
+  
     # Установка иконки для основного окна
-    root.iconbitmap('./_internals/assets/icon.ico')
+    icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'icon.ico')
+    root.iconbitmap(icon_path)
 
     root.mainloop()
