@@ -16,11 +16,8 @@ def select_file():
             filetypes=[("Excel files", "*.xlsx")]
         )
         if output_file:
-            try:
-                validate_kks(input_file, output_file)
-                messagebox.showinfo("Успех", "Отчет успешно создан!")
-            except Exception as e:
-                messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
+            return input_file, output_file
+    return None, None
 
 def select_compare_files():
     file1 = filedialog.askopenfilename(
@@ -49,11 +46,11 @@ def create_gui():
 
     check_cyrillic = tk.BooleanVar(value=True)
     check_duplicates = tk.BooleanVar(value=True)
-    compare_var = tk.BooleanVar(value=True)
+    check_compare = tk.BooleanVar(value=True)
 
     cb_cyrillic = tk.Checkbutton(root, text="Проверка на кириллицу", variable=check_cyrillic)
     cb_duplicates = tk.Checkbutton(root, text="Проверка на дубликаты", variable=check_duplicates)
-    cb_compare_check = tk.Checkbutton(root, text="Сравнение отчетов", variable=compare_var)
+    cb_compare_check = tk.Checkbutton(root, text="Сравнение отчетов", variable=check_compare)
     
 
     cb_cyrillic.pack()
@@ -61,15 +58,15 @@ def create_gui():
     cb_compare_check.pack()
     
     def on_process():
-        if unique_var.get() or cyrillic_var.get():
+        if check_duplicates.get() or check_cyrillic.get():
             input_file, output_file = select_file()
             if input_file and output_file:
                 try:
-                    validate_kks(input_file, output_file, unique_var.get(), cyrillic_var.get())
+                    validate_kks(input_file, output_file, check_duplicates.get(), check_cyrillic.get())
                     messagebox.showinfo("Успех", "Отчет успешно создан!")
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
-        if compare_var.get():
+        if check_compare.get():
             file1, file2, output_file = select_compare_files()
             if file1 and file2 and output_file:
                 try:
@@ -86,3 +83,6 @@ def create_gui():
     root.iconbitmap(icon_path)
 
     root.mainloop()
+
+if __name__ == "__main__":
+    create_gui()
