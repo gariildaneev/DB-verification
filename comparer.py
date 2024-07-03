@@ -1,4 +1,5 @@
 import pandas as pd
+import xlsxwriter
 
 def compare_reports(file1, file2, output_file):
     df1 = pd.read_excel(file1)
@@ -18,10 +19,9 @@ def compare_reports(file1, file2, output_file):
             row2 = df2.loc[kks]
             row_changes = {'KKS': kks}
             for col in df1.columns:
-                if col in df2.columns and not pd.isna(row1[col]) and not pd.isna(row2[col]):
-                    if row1[col] != row2[col]:
-                        row_changes[col] = row1[col]
-                        row_changes[f"{col}_new"] = row2[col]
+                if col in df2.columns and not row1[col].equals(row2[col]):
+                    row_changes[col] = row1[col]
+                    row_changes[f"{col}_new"] = row2[col]
             if len(row_changes) > 1:
                 changes.append(row_changes)
 
@@ -40,4 +40,4 @@ def compare_reports(file1, file2, output_file):
                 elif isinstance(value, (int, float)):
                     ws_changes.write_number(r_idx, c_idx, value)
                 else:
-                    ws_changes.write(r_idx, c_idx, value)
+                    ws_changes.write(r_idx, c_idx, str(value))
