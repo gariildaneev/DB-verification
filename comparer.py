@@ -5,10 +5,10 @@ from utils import contains_cyrillic, highlight_cyrillic
 def compare_reports(file1, file2, output_file):
     df1 = pd.read_excel(file1)
     df2 = pd.read_excel(file2)
-    
+
     if 'KKS' not in df1.columns or 'KKS' not in df2.columns:
         raise ValueError("Оба файла должны содержать колонку 'KKS'")
-
+        
     df1.set_index('KKS', inplace=True)
     df2.set_index('KKS', inplace=True)
 
@@ -24,13 +24,19 @@ def compare_reports(file1, file2, output_file):
             change = { 'KKS': kks }
             for col in df1.columns:
                 value1, value2 = row1[col], row2[col]
-                
-                # Используем логические операторы для сравнения значений
+
+                # Используем методы any() и all() для сравнения
                 if (pd.isna(value1) and not pd.isna(value2)) or (not pd.isna(value1) and pd.isna(value2)):
                     change[col] = value1
                     change[f'{col}_new'] = value2
                 elif pd.isna(value1) and pd.isna(value2):
                     change[col] = value1
+                elif isinstance(value1, pd.Series) and isinstance(value2, pd.Series):
+                    if not value1.equals(value2):
+                        change[col] = value1
+                        change[f'{col}_new'] = value2
+                    else:
+                        change[col] = value1
                 elif value1 != value2:
                     change[col] = value1
                     change[f'{col}_new'] = value2
