@@ -29,12 +29,13 @@ def compare_reports(file1, file2, output_file):
         for col in df1.columns:
             value1, value2 = row1[col], row2[col]
 
-            if pd.isna(value1) or pd.isna(value2) or str(value1) != str(value2):
-                change[col] = str(value1)
-                change[f'{col}_new'] = str(value2)
+            # Сравнение значений в ячейках
+            if pd.isna(value1) or pd.isna(value2) or value1 != value2:
+                change[col] = value1
+                change[f'{col}_new'] = value2
                 has_changes = True
             else:
-                change[col] = str(value1)
+                change[col] = value1
 
         if has_changes:
             changes.append(change)
@@ -84,4 +85,3 @@ def compare_reports(file1, file2, output_file):
             ws_added.write(r_idx, c_idx, str(value) if pd.notna(value) else "")
 
     workbook.close()
-
