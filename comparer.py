@@ -1,5 +1,6 @@
 import pandas as pd
 import xlsxwriter
+from difflib import ndiff
 from utils import contains_cyrillic, highlight_cyrillic
 
 def compare_reports(file1, file2, output_file):
@@ -18,7 +19,6 @@ def compare_reports(file1, file2, output_file):
 
     changes = []
 
-    # Сравнение строк для совпадающих KKS
     for kks in common_kks:
         row1 = df1.loc[kks]
         row2 = df2.loc[kks]
@@ -27,36 +27,24 @@ def compare_reports(file1, file2, output_file):
         has_changes = False
 
         for col in df1.columns:
-            value1, value2 = row1[col], row2[col]
+            value1 = str(row1[col]) if pd.notna(row1[col]) else ""
+            value2 = str(row2[col]) if pd.notna(row2[col]) else ""
 
-            # Приведение значений к строковому типу и сравнение
-            if pd.isna(value1):
-                str_value1 = ""
-            else:
-                str_value1 = str(value1)
-                
-            if pd.isna(value2):
-                str_value2 = ""
-            else:
-                str_value2 = str(value2)
-
-            if str_value1 != str_value2:
-                change[col] = str_value1
-                change[f'{col}_new'] = str_value2
+            if value1 != value2:
+                change[col] = value1
+                change[f'{col}_new'] = value2
                 has_changes = True
             else:
-                change[col] = str_value1
+                change[col] = value1
 
         if has_changes:
             changes.append(change)
 
     changes_df = pd.DataFrame(changes)
 
-    # Строки с удаленными KKS
     removed_rows = df1.loc[removed_kks].reset_index()
     removed_rows['Status'] = 'Удаленные KKS'
 
-    # Строки с новыми KKS
     added_rows = df2.loc[added_kks].reset_index()
     added_rows['Status'] = 'Новые KKS'
 
@@ -65,15 +53,18 @@ def compare_reports(file1, file2, output_file):
     ws_removed = workbook.add_worksheet("Удаленные KKS")
     ws_added = workbook.add_worksheet("Новые KKS")
 
-    # Запись изменений
     for c_idx, col in enumerate(changes_df.columns, start=0):
         ws_changes.write(0, c_idx, col)
 
     for r_idx, row in enumerate(changes_df.itertuples(), start=1):
         for c_idx, value in enumerate(row[1:], start=0):
-            ws_changes.write(r_idx, c_idx, str(value) if pd.notna(value) else "")
+            if pd.isna(value) or value in [float('nan'), float('inf'), float('-inf')]:
+                ws_changes.write(r_idx, c_idx, "")
+            elif isinstance(value, (int, float)):
+                ws_changes.write_number(r_idx, c_idx, value)
+            else:
+                ws_changes.write(r_idx, c_idx, str(value))
 
-    # Запись удаленных KKS
     for c_idx, col in enumerate(removed_rows.columns, start=0):
         ws_removed.write(0, c_idx, col)
 
@@ -81,7 +72,6 @@ def compare_reports(file1, file2, output_file):
         for c_idx, value in enumerate(row[1:], start=0):
             ws_removed.write(r_idx, c_idx, str(value) if pd.notna(value) else "")
 
-    # Запись новых KKS
     for c_idx, col in enumerate(added_rows.columns, start=0):
         ws_added.write(0, c_idx, col)
 
