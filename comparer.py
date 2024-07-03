@@ -5,10 +5,10 @@ from utils import contains_cyrillic, highlight_cyrillic
 def compare_reports(file1, file2, output_file):
     df1 = pd.read_excel(file1)
     df2 = pd.read_excel(file2)
-
+    
     if 'KKS' not in df1.columns or 'KKS' not in df2.columns:
         raise ValueError("Оба файла должны содержать колонку 'KKS'")
-        
+    
     df1.set_index('KKS', inplace=True)
     df2.set_index('KKS', inplace=True)
 
@@ -20,28 +20,35 @@ def compare_reports(file1, file2, output_file):
         row1 = df1.loc[kks]
         row2 = df2.loc[kks]
 
-        if not row1.equals(row2):
-            change = { 'KKS': kks }
-            for col in df1.columns:
-                value1, value2 = row1[col], row2[col]
+        change = {'KKS': kks}
+        for col in df1.columns:
+            value1, value2 = row1[col], row2[col]
 
-                # Используем методы any() и all() для сравнения
-                if (pd.isna(value1) and not pd.isna(value2)) or (not pd.isna(value1) and pd.isna(value2)):
+            # Проверка на равенство значений
+            if pd.isna(value1) or pd.isna(value2):
+                if not pd.isna(value1) or not pd.isna(value2):
                     change[col] = value1
                     change[f'{col}_new'] = value2
-                elif pd.isna(value1) and pd.isna(value2):
+            elif isinstance(value1, (pd.Series, pd.DataFrame)):
+                if not value1.equals(value2):
                     change[col] = value1
-                elif isinstance(value1, pd.Series) and isinstance(value2, pd.Series):
-                    if not value1.equals(value2):
-                        change[col] = value1
-                        change[f'{col}_new'] = value2
-                    else:
-                        change[col] = value1
-                elif value1 != value2:
+                    change[f'{col}_new'] = value2
+            elif hasattr(value1, 'item') and hasattr(value2, 'item'):
+                if value1.item() != value2.item():
+                    change[col] = value1
+                    change[f'{col}_new'] = value2
+            elif hasattr(value1, 'all') and hasattr(value2, 'all'):
+                if not value1.all() == value2.all():
+                    change[col] = value1
+                    change[f'{col}_new'] = value2
+            else:
+                if value1 != value2:
                     change[col] = value1
                     change[f'{col}_new'] = value2
                 else:
                     change[col] = value1
+
+        if len(change) > 1:  # If there are any changes other than 'KKS'
             changes.append(change)
 
     changes_df = pd.DataFrame(changes)
