@@ -17,11 +17,10 @@ def compare_reports(file1, file2, output_file):
         row1 = df1.loc[kks]
         row2 = df2.loc[kks]
 
-        diff = row1 != row2
-        if diff.any():
+        if not row1.equals(row2):
             change = { 'KKS': kks }
             for col in df1.columns:
-                if diff[col]:
+                if row1[col] != row2[col]:
                     change[col] = row1[col]
                     change[f'{col}_new'] = row2[col]
                 else:
