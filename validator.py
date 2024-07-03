@@ -26,4 +26,3 @@ def validate_kks(input_file, output_file, check_duplicates, check_cyrillic):
                         highlight_cyrillic(ws_cyrillic, r_idx, c_idx, value, workbook)
                     else:
                         ws_cyrillic.write(r_idx, c_idx, value)
-
