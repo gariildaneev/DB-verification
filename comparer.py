@@ -17,7 +17,7 @@ def compare_reports(file1, file2, output_file):
     common_kks = old_kks & new_kks
 
     changes = []
-    
+
     # Сравнение строк для совпадающих KKS
     for kks in common_kks:
         row1 = df1.loc[kks]
@@ -51,7 +51,7 @@ def compare_reports(file1, file2, output_file):
             changes.append(change)
 
     changes_df = pd.DataFrame(changes)
-    
+
     # Строки с удаленными KKS
     removed_rows = df1.loc[removed_kks].reset_index()
     removed_rows['Status'] = 'Удаленные KKS'
@@ -71,12 +71,7 @@ def compare_reports(file1, file2, output_file):
 
     for r_idx, row in enumerate(changes_df.itertuples(), start=1):
         for c_idx, value in enumerate(row[1:], start=0):
-            if pd.isna(value) or value in [float('nan'), float('inf'), float('-inf')]:
-                ws_changes.write(r_idx, c_idx, "")
-            elif isinstance(value, (int, float)):
-                ws_changes.write_number(r_idx, c_idx, value)
-            else:
-                ws_changes.write(r_idx, c_idx, str(value))
+            ws_changes.write(r_idx, c_idx, str(value) if pd.notna(value) else "")
 
     # Запись удаленных KKS
     for c_idx, col in enumerate(removed_rows.columns, start=0):
