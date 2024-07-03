@@ -1,16 +1,13 @@
 import pandas as pd
 import xlsxwriter
+from utils import contains_cyrillic, highlight_cyrillic
 
 def compare_reports(file1, file2, output_file):
     df1 = pd.read_excel(file1)
     df2 = pd.read_excel(file2)
-    
-    if 'KKS' not in df1.columns or 'KKS' not in df2.columns:
-        raise ValueError("Оба файла должны содержать колонку 'KKS'")
-        
+
     df1.set_index('KKS', inplace=True)
     df2.set_index('KKS', inplace=True)
-
 
     common_kks = df1.index.intersection(df2.index)
 
@@ -20,7 +17,7 @@ def compare_reports(file1, file2, output_file):
         row1 = df1.loc[kks]
         row2 = df2.loc[kks]
 
-        diff = (row1 != row2)
+        diff = row1 != row2
         if diff.any():
             change = { 'KKS': kks }
             for col in df1.columns:
@@ -49,4 +46,3 @@ def compare_reports(file1, file2, output_file):
                 ws.write(r_idx, c_idx, str(value))
 
     workbook.close()
-
