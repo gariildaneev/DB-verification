@@ -21,30 +21,15 @@ def compare_reports(file1, file2, output_file):
         for col in df1.columns:
             value1, value2 = row1[col], row2[col]
 
-            # Проверка на равенство значений
-            if pd.isna(value1) or pd.isna(value2):
-                if not pd.isna(value1) or not pd.isna(value2):
-                    change[col] = value1
-                    change[f'{col}_new'] = value2
-            elif isinstance(value1, (pd.Series, pd.DataFrame)):
-                if not value1.equals(value2):
-                    change[col] = value1
-                    change[f'{col}_new'] = value2
-            elif hasattr(value1, 'all') and hasattr(value2, 'all'):
-                if not value1.all() == value2.all():
-                    change[col] = value1
-                    change[f'{col}_new'] = value2
+            # Приводим значения к строкам для корректного сравнения
+            str_value1 = str(value1)
+            str_value2 = str(value2)
+
+            if str_value1 != str_value2:
+                change[col] = str_value1
+                change[f'{col}_new'] = str_value2
             else:
-                try:
-                    if value1 != value2:
-                        change[col] = value1
-                        change[f'{col}_new'] = value2
-                    else:
-                        change[col] = value1
-                except ValueError:
-                    if not (pd.isna(value1) and pd.isna(value2)):
-                        change[col] = value1
-                        change[f'{col}_new'] = value2
+                change[col] = str_value1
 
         if len(change) > 1:  # If there are any changes other than 'KKS'
             changes.append(change)
