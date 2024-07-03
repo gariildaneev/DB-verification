@@ -29,13 +29,23 @@ def compare_reports(file1, file2, output_file):
         for col in df1.columns:
             value1, value2 = row1[col], row2[col]
 
-            # Сравнение значений в ячейках
-            if pd.isna(value1) or pd.isna(value2) or value1 != value2:
-                change[col] = value1
-                change[f'{col}_new'] = value2
+            # Приведение значений к строковому типу и сравнение
+            if pd.isna(value1):
+                str_value1 = ""
+            else:
+                str_value1 = str(value1)
+                
+            if pd.isna(value2):
+                str_value2 = ""
+            else:
+                str_value2 = str(value2)
+
+            if str_value1 != str_value2:
+                change[col] = str_value1
+                change[f'{col}_new'] = str_value2
                 has_changes = True
             else:
-                change[col] = value1
+                change[col] = str_value1
 
         if has_changes:
             changes.append(change)
