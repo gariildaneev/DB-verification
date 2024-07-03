@@ -2,39 +2,28 @@ import pandas as pd
 import xlsxwriter
 from utils import contains_cyrillic, highlight_cyrillic
 
-def validate_kks(input_file, output_file):
+def validate_kks(input_file, output_file, check_duplicates, check_cyrillic):
     df = pd.read_excel(input_file)
-    duplicates = df[df.duplicated(subset=['KKS'], keep=False)]
-    cyrillic_rows = df[df['KKS'].apply(contains_cyrillic)]
+    duplicates = df[df.duplicated(subset=['KKS'], keep=False)] if check_duplicates else pd.DataFrame()
+    cyrillic_rows = df[df['KKS'].apply(contains_cyrillic)] if check_cyrillic else pd.DataFrame()
 
-    workbook = xlsxwriter.Workbook(output_file)
+    kks_column_index = df.columns.get_loc("KKS")
 
-    # Sheet for duplicates
-    ws_duplicates = workbook.add_worksheet("Отчет о дубликатах")
-    ws_duplicates.write('A1', "Значение KKS не уникально", workbook.add_format({'bold': True, 'font_size': 14}))
+    with xlsxwriter.Workbook(output_file) as workbook:
+        if check_duplicates:
+            ws_duplicates = workbook.add_worksheet("Отчет о дубликатах")
+            ws_duplicates.write('A1', "Значение KKS не уникально")
+            for r_idx, row in enumerate(duplicates.itertuples(), start=1):
+                for c_idx, value in enumerate(row[1:], start=1):
+                    ws_duplicates.write(r_idx, c_idx, value)
 
-    for r_idx, row in enumerate(duplicates.itertuples(index=False), start=2):
-        for c_idx, value in enumerate(row, start=0):
-            if pd.isna(value):
-                ws_duplicates.write_blank(r_idx, c_idx, None)
-            elif isinstance(value, (int, float)):
-                ws_duplicates.write_number(r_idx, c_idx, value)
-            else:
-                ws_duplicates.write_string(r_idx, c_idx, str(value))
+        if check_cyrillic:
+            ws_cyrillic = workbook.add_worksheet("Отчет о кириллице")
+            ws_cyrillic.write('A1', "Значение KKS содержит кириллицу")
+            for r_idx, row in enumerate(cyrillic_rows.itertuples(), start=1):
+                for c_idx, value in enumerate(row[1:], start=1):
+                    if c_idx - 1 == kks_column_index:  # Adjust for zero-based index
+                        highlight_cyrillic(ws_cyrillic, r_idx, c_idx, value, workbook)
+                    else:
+                        ws_cyrillic.write(r_idx, c_idx, value)
 
-    # Sheet for cyrillic
-    ws_cyrillic = workbook.add_worksheet("Отчет о кириллице")
-    ws_cyrillic.write('A1', "Значение KKS содержит кириллицу", workbook.add_format({'bold': True, 'font_size': 14}))
-
-    for r_idx, row in enumerate(cyrillic_rows.itertuples(index=False), start=2):
-        for c_idx, value in enumerate(row, start=0):
-            if pd.isna(value):
-                ws_cyrillic.write_blank(r_idx, c_idx, None)
-            elif c_idx == cyrillic_rows.columns.get_loc('KKS'):
-                highlight_cyrillic(ws_cyrillic, r_idx, c_idx, value, workbook)
-            elif isinstance(value, (int, float)):
-                ws_cyrillic.write_number(r_idx, c_idx, value)
-            else:
-                ws_cyrillic.write_string(r_idx, c_idx, str(value))
-
-    workbook.close()
