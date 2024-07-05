@@ -18,3 +18,18 @@ def highlight_cyrillic(worksheet, row, col, text, workbook):
             cell_content.append(part)
 
     worksheet.write_rich_string(row, col, *cell_content)
+
+# Функция предварительной проверки базы данных для сравнения отчетов
+def pre_comparison_check(df, file_name):
+    kks_column = df['KKS']
+    cyrillic_errors = kks_column.apply(contains_cyrillic).any()
+    duplicate_errors = kks_column.duplicated().any()
+
+    if cyrillic_errors and duplicate_errors:
+        return f"В файле {file_name} в поле KKS обнаружена кириллица и дубликаты, проверьте базу данных."
+    elif cyrillic_errors:
+        return f"В файле {file_name} в поле KKS обнаружена кириллица, проверьте базу данных."
+    elif duplicate_errors:
+        return f"В файле {file_name} в поле KKS обнаружены дубликаты, проверьте базу данных."
+    else:
+        return None
