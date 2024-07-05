@@ -1,6 +1,7 @@
 import pandas as pd
 import xlsxwriter
 from difflib import ndiff
+from utils import pre_comparison_check
 
 
 def compare_reports(file1, file2, output_file):
@@ -113,4 +114,4 @@ def compare_reports(file1, file2, output_file):
                     ws_added.write(r_idx, c_idx, str(value) if pd.notna(value) else "")
         
             workbook.close()
-            
+            return "Успех", "Отчет о сравнении успешно создан!"
