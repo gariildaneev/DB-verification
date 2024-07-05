@@ -1,7 +1,7 @@
 import pandas as pd
 import xlsxwriter
 from difflib import ndiff
-from utils import contains_cyrillic, highlight_cyrillic
+
 
 def compare_reports(file1, file2, output_file):
     df1 = pd.read_excel(file1)
@@ -27,7 +27,9 @@ def compare_reports(file1, file2, output_file):
         has_changes = False
 
         for col in df1.columns:
+
             value1 = str(row1[col]) if pd.notna(row1[col]) else ""
+
             value2 = str(row2[col]) if pd.notna(row2[col]) else ""
 
             if value1 != value2:
@@ -40,30 +42,46 @@ def compare_reports(file1, file2, output_file):
         if has_changes:
             changes.append(change)
 
+
     changes_df = pd.DataFrame(changes)
 
-    removed_rows = df1.loc[removed_kks].reset_index()
+    removed_rows = df1.loc[list(removed_kks)].reset_index()
     removed_rows['Status'] = 'Удаленные KKS'
 
-    added_rows = df2.loc[added_kks].reset_index()
+    added_rows = df2.loc[list(added_kks)].reset_index()
     added_rows['Status'] = 'Новые KKS'
 
     workbook = xlsxwriter.Workbook(output_file)
-    ws_changes = workbook.add_worksheet("Сравнение отчетов")
+    ws_changes = workbook.add_worksheet("Сравнение БД")
     ws_removed = workbook.add_worksheet("Удаленные KKS")
     ws_added = workbook.add_worksheet("Новые KKS")
 
-    for c_idx, col in enumerate(changes_df.columns, start=0):
+        # Формат для выделения колонок _new
+    yellow_format = workbook.add_format({'bg_color': '#FFFF00'})
+
+    # Записываем заголовки в лист сравнения отчетов
+    change_columns = []
+    for col in changes_df.columns:
+        if not col.endswith("_new"):
+            change_columns.append(col)
+            if f'{col}_new' in changes_df.columns:
+                change_columns.append(f'{col}_new')
+
+    for c_idx, col in enumerate(change_columns, start=0):
         ws_changes.write(0, c_idx, col)
 
+    # Записываем данные в лист сравнения отчетов
     for r_idx, row in enumerate(changes_df.itertuples(), start=1):
-        for c_idx, value in enumerate(row[1:], start=0):
+        for c_idx, col in enumerate(change_columns, start=0):
+            value = getattr(row, col, "")
+            cell_format = yellow_format if col.endswith('_new') else None
             if pd.isna(value) or value in [float('nan'), float('inf'), float('-inf')]:
-                ws_changes.write(r_idx, c_idx, "")
+                ws_changes.write(r_idx, c_idx, "", cell_format)
             elif isinstance(value, (int, float)):
-                ws_changes.write_number(r_idx, c_idx, value)
+                ws_changes.write_number(r_idx, c_idx, value, cell_format)
             else:
-                ws_changes.write(r_idx, c_idx, str(value))
+                ws_changes.write(r_idx, c_idx, str(value), cell_format)
+
 
     for c_idx, col in enumerate(removed_rows.columns, start=0):
         ws_removed.write(0, c_idx, col)
