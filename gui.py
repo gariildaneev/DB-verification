@@ -50,7 +50,7 @@ def create_gui():
 
     cb_cyrillic = tk.Checkbutton(root, text="Проверка на кириллицу", variable=check_cyrillic)
     cb_duplicates = tk.Checkbutton(root, text="Проверка на дубликаты", variable=check_duplicates)
-    cb_compare_check = tk.Checkbutton(root, text="Сравнение отчетов", variable=check_compare)
+    cb_compare_check = tk.Checkbutton(root, text="Сравнение двух баз данных", variable=check_compare)
     
 
     cb_cyrillic.pack()
