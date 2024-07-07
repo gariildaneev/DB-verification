@@ -78,13 +78,14 @@ def compare_reports(file1, file2, output_file):
                 change_columns.append(f'{col}_new')
     
     for c_idx, col in enumerate(change_columns, start=0):
-        ws_changes.write(0, c_idx, col)
+        header_format = yellow_format if col.endswith('_new') else None
+        ws_changes.write(0, c_idx, col, header_format)
     
     # Записываем данные в лист сравнения отчетов
     for r_idx, row in enumerate(changes_df.itertuples(), start=1):
         for c_idx, col in enumerate(change_columns, start=0):
             value = getattr(row, col, "")
-            cell_format = yellow_format if col.endswith('_new') else None
+            cell_format = yellow_format if col.endswith('_new') and value else None
             if pd.isna(value) or value in [float('nan'), float('inf'), float('-inf')]:
                 ws_changes.write(r_idx, c_idx, "", cell_format)
             elif isinstance(value, (int, float)):
