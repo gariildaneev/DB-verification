@@ -85,7 +85,7 @@ def compare_reports(file1, file2, output_file):
     for r_idx, row in enumerate(changes_df.itertuples(), start=1):
         for c_idx, col in enumerate(change_columns, start=0):
             value = getattr(row, col, "")
-            cell_format = yellow_format if col.endswith('_new') and value else None
+            cell_format = yellow_format if col.endswith('_new') and pd.notna(value) and value != "" else None
             if pd.isna(value) or value in [float('nan'), float('inf'), float('-inf')]:
                 ws_changes.write(r_idx, c_idx, "", cell_format)
             elif isinstance(value, (int, float)):
