@@ -44,25 +44,27 @@ def create_gui():
     root.title("Проверка базы данных")
     root.geometry("300x200")
 
-    check_cyrillic = tk.BooleanVar(value=True)
-    check_duplicates = tk.BooleanVar(value=True)
-    check_compare = tk.BooleanVar(value=True)
+    check_cyrillic = tk.BooleanVar(value=False)
+    check_duplicates = tk.BooleanVar(value=False)
+    check_compare = tk.BooleanVar(value=False)
+    check_connection = tk.BooleanVar(value=False)
 
-    cb_cyrillic = tk.Checkbutton(root, text="Проверка на кириллицу", variable=check_cyrillic)
-    cb_duplicates = tk.Checkbutton(root, text="Проверка на дубликаты", variable=check_duplicates)
+    cb_cyrillic = tk.Checkbutton(root, text="Проверка KKS на кириллицу", variable=check_cyrillic)
+    cb_duplicates = tk.Checkbutton(root, text="Проверка KKS на дубликаты", variable=check_duplicates)
     cb_compare_check = tk.Checkbutton(root, text="Сравнение двух баз данных", variable=check_compare)
+    cb_connection = tk.Checkbutton(root, text="Анализ поля 'Connection'", variable=check_connection)
     
-
     cb_cyrillic.pack()
     cb_duplicates.pack()
     cb_compare_check.pack()
+    cb_connection.pack()
     
     def on_process():
-        if check_duplicates.get() or check_cyrillic.get():
+        if check_duplicates.get() or check_cyrillic.get() or check_connection.get():
             input_file, output_file = select_file()
             if input_file and output_file:
                 try:
-                    validate_kks(input_file, output_file, check_duplicates.get(), check_cyrillic.get())
+                    validate_kks(input_file, output_file, check_duplicates.get(), check_cyrillic.get(), check_connection.get())
                     messagebox.showinfo("Успех", "Отчет успешно создан!")
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
