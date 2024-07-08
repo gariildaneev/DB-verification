@@ -44,53 +44,47 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
     if check_connection:
         connection_empty_errors = []
         kks_empty_errors = []
-    
+
         for index, row in df.iterrows():
             kks = row['KKS']
-            connection = row['Connection']
-    
+            connection = row['CONNECTION']
+
             kks_filled = pd.notna(kks) and kks.strip() != ''
             connection_filled = pd.notna(connection) and connection.strip() != ''
-    
-            if kks_filled and not connection_filled:
-                row_data = row.to_dict()
-                row_data['Error'] = 'Connection is empty'
-                connection_empty_errors.append(row_data)
-            elif not kks_filled and connection_filled:
-                row_data = row.to_dict()
-                row_data['Error'] = 'KKS is empty'
-                kks_empty_errors.append(row_data)
-    
-        # Создание DataFrame для ошибок
-        connection_empty_df = pd.DataFrame(connection_empty_errors)
-        kks_empty_df = pd.DataFrame(kks_empty_errors)
-    
-        # Запись в Excel
-        workbook = xlsxwriter.Workbook(output_file)
-        worksheet = workbook.add_worksheet("Errors")
-    
-        # Заголовок для Connection is empty
-        worksheet.write(0, 0, "Errors: Connection is empty")
-        start_row = 1
-        if not connection_empty_df.empty:
-            for c_idx, col in enumerate(connection_empty_df.columns, start=0):
-                worksheet.write(start_row, c_idx, col)
-    
-            for r_idx, row in enumerate(connection_empty_df.itertuples(), start=start_row + 1):
-                for c_idx, value in enumerate(row[1:], start=0):
-                    worksheet.write(r_idx, c_idx, str(value) if pd.notna(value) else "")
-    
-            start_row += len(connection_empty_df) + 2  # Оставляем отступ
-    
-        # Заголовок для KKS is empty
-        worksheet.write(start_row, 0, "Errors: KKS is empty")
-        start_row += 1
-        if not kks_empty_df.empty:
-            for c_idx, col in enumerate(kks_empty_df.columns, start=0):
-                worksheet.write(start_row, c_idx, col)
-    
-            for r_idx, row in enumerate(kks_empty_df.itertuples(), start=start_row + 1):
-                for c_idx, value in enumerate(row[1:], start=0):
-                    worksheet.write(r_idx, c_idx, str(value) if pd.notna(value) else "")
 
+            if kks_filled and not connection_filled:
+                connection_empty_errors.append(row)
+            elif not kks_filled and connection_filled:
+                kks_empty_errors.append(row)
+
+        ws_connection_errors = workbook.add_worksheet("Анализ поля CONNECTION")
+
+        start_row = 0
+
+        # Запись ошибок, где Connection пустое
+        if connection_empty_errors:
+            ws_connection_errors.write(start_row, 0, "Connection is empty")
+            start_row += 1
+            for c_idx, col in enumerate(df.columns):
+                ws_connection_errors.write(start_row, c_idx, col)
+            start_row += 1
+            for row in connection_empty_errors:
+                for c_idx, value in enumerate(row):
+                    ws_connection_errors.write(start_row, c_idx, str(value) if pd.notna(value) else "")
+                start_row += 1
+
+            start_row += 2  # Оставляем отступ
+
+        # Запись ошибок, где KKS пустое
+        if kks_empty_errors:
+            ws_connection_errors.write(start_row, 0, "KKS is empty")
+            start_row += 1
+            for c_idx, col in enumerate(df.columns):
+                ws_connection_errors.write(start_row, c_idx, col)
+            start_row += 1
+            for row in kks_empty_errors:
+                for c_idx, value in enumerate(row):
+                    ws_connection_errors.write(start_row, c_idx, str(value) if pd.notna(value) else "")
+                start_row += 1
+                
     workbook.close()
