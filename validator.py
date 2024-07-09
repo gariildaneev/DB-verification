@@ -3,10 +3,11 @@ import xlsxwriter
 import re
 from utils import contains_cyrillic, highlight_cyrillic
 
-def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=True, check_connection=True):
+def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=True, check_connection=True, check_object_type=True):
     df = pd.read_excel(input_file)
     
     workbook = xlsxwriter.Workbook(output_file)
+    yellow_format = workbook.add_format({'bg_color': '#FFFF00'})
 
     if check_duplicates:
         duplicates = df[df.duplicated(subset=['KKS'], keep=False)]
@@ -46,7 +47,6 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
         connection_empty_errors = []
         kks_empty_errors = []
         object_type_empty_errors = []
-        yellow_format = workbook.add_format({'bg_color': '#FFFF00'})
 
         for index, row in df.iterrows():
             kks = row['KKS']
@@ -92,7 +92,7 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
                     ws_connection_errors.write(start_row, c_idx, str(value) if pd.notna(value) else "")
                 start_row += 1
         # Запись ошибок, где Object Type пустое
-        if object_type_errors:
+        if object_type_empty_errors:
             ws_connection_errors.write(start_row, 0, "OBJECT_TYPE is empty", yellow_format)
             start_row += 1
             for c_idx, col in enumerate(df.columns):
@@ -102,5 +102,37 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
                 for c_idx, value in enumerate(row):
                     ws_connection_errors.write(start_row, c_idx, str(value) if pd.notna(value) else "")
                 start_row += 1
+
+    if check_object_type:
+        object_type_analysis_errors = []
+
+        fields_to_check = ['UNITS', 'IN_LEVEL', 'MAX', 'MIN', 'LA', 'HW', 'LW', 'HA', 'HT', 'LT']
+        for index, row in df.iterrows():
+            object_type = row['OBJECT_TYPE']
+            if object_type in ['AI', 'AO']:
+                missing_fields = []
+                for field in fields_to_check:
+                    if pd.isna(row[field]) or row[field].strip() == '':
+                        missing_fields.append(field)
+                if missing_fields:
+                    row_dict = row.to_dict()
+                    row_dict['Missing Fields'] = missing_fields
+                    object_type_analysis_errors.append(row_dict)
+    
+        if object_type_analysis_errors:
+            ws_object_type_errors = workbook.add_worksheet("Анализ поля OBJECT_TYPE")
+            ws_object_type_errors.write(0, 0, "Ошибки: Поля должны быть заполнены для OBJECT_TYPE 'AI' или 'AO'")
+            for c_idx, col in enumerate(df.columns):
+                ws_object_type_errors.write(1, c_idx, col)
+            ws_object_type_errors.write(1, len(df.columns), 'Missing Fields')
+    
+            for r_idx, row in enumerate(object_type_analysis_errors, start=2):
+                for c_idx, (col, value) in enumerate(row.items()):
+                    if col == 'Missing Fields':
+                        ws_object_type_errors.write(r_idx, len(df.columns), ', '.join(value))
+                    else:
+                        cell_format = yellow_format if col in row['Missing Fields'] else None
+                        ws_object_type_errors.write(r_idx, c_idx, str(value) if pd.notna(value) else "", cell_format)
+
 
     workbook.close()
