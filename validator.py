@@ -5,12 +5,11 @@ from utils import contains_cyrillic, highlight_cyrillic
 
 def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=True, check_connection=True):
     df = pd.read_excel(input_file)
-    duplicates = df[df.duplicated(subset=['KKS'], keep=False)]
-    cyrillic_rows = df[df['KKS'].apply(lambda x: contains_cyrillic(str(x)) if pd.notna(x) else False)]
-
+    
     workbook = xlsxwriter.Workbook(output_file)
 
     if check_duplicates:
+        duplicates = df[df.duplicated(subset=['KKS'], keep=False)]
         ws_duplicates = workbook.add_worksheet("Отчет о дубликатах")
         ws_duplicates.write(0, 0, "Значение KKS не уникально")
         for c_idx, col in enumerate(df.columns):
@@ -25,6 +24,7 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
                     ws_duplicates.write(r_idx, c_idx, str(value))
 
     if check_cyrillic:
+        cyrillic_rows = df[df['KKS'].apply(lambda x: contains_cyrillic(str(x)) if pd.notna(x) else False)]
         ws_cyrillic = workbook.add_worksheet("Отчет о кириллице")
         ws_cyrillic.write(0, 0, "Значение KKS содержит кириллицу")
         for c_idx, col in enumerate(df.columns):
