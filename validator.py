@@ -55,7 +55,7 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
 
             kks_filled = pd.notna(kks) and str(kks).strip() != ''
             connection_filled = pd.notna(connection) and str(connection).strip() != ''
-            object_type_filled = pd.notna(object_type) and object_type.strip() != ''
+            object_type_filled = pd.notna(object_type) and str(object_type).strip() != ''
 
             if kks_filled and not connection_filled:
                 connection_empty_errors.append(row)
@@ -104,15 +104,17 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
                 start_row += 1
 
     if check_object_type:
+        # Проверка полей для OBJECT_TYPE == 'AI' или 'AO'
         object_type_analysis_errors = []
-
+    
         fields_to_check = ['UNITS', 'IN_LEVEL', 'MAX', 'MIN', 'LA', 'HW', 'LW', 'HA', 'HT', 'LT']
         for index, row in df.iterrows():
             object_type = row['OBJECT_TYPE']
             if object_type in ['AI', 'AO']:
                 missing_fields = []
                 for field in fields_to_check:
-                    if pd.isna(row[field]) or row[field].strip() == '':
+                    value = row[field]
+                    if pd.isna(value) or (isinstance(value, str) and value.strip() == ''):
                         missing_fields.append(field)
                 if missing_fields:
                     row_dict = row.to_dict()
@@ -133,6 +135,5 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
                     else:
                         cell_format = yellow_format if col in row['Missing Fields'] else None
                         ws_object_type_errors.write(r_idx, c_idx, str(value) if pd.notna(value) else "", cell_format)
-
 
     workbook.close()
