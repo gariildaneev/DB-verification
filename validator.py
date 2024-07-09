@@ -102,6 +102,15 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
                 for c_idx, value in enumerate(row):
                     ws_connection_errors.write(start_row, c_idx, str(value) if pd.notna(value) else "")
                 start_row += 1
+        # Анализ поля CONNECTION и подсчет количества KKS
+        connection_counts = df[df['KKS'].notna() & df['KKS'].str.strip().astype(bool)]['CONNECTION'].value_counts().reset_index()
+        connection_counts.columns = ['Connection', 'Кол-во']
+        
+        ws_connection_analysis = workbook.add_worksheet("CONNECTION-статистика")
+        for r_idx, row in connection_counts.iterrows():
+            for c_idx, value in enumerate(row):
+                ws_connection_analysis.write(r_idx, c_idx, str(value) if pd.notna(value) else "")
+
 
     if check_object_type:
         # Проверка полей для OBJECT_TYPE == 'AI' или 'AO'
