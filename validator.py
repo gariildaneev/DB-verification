@@ -98,7 +98,7 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
             for c_idx, col in enumerate(df.columns):
                 ws_connection_errors.write(start_row, c_idx, col)
             start_row += 1
-            for row in object_type_errors:
+            for row in object_type_empty_errors:
                 for c_idx, value in enumerate(row):
                     ws_connection_errors.write(start_row, c_idx, str(value) if pd.notna(value) else "")
                 start_row += 1
