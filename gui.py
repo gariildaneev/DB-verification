@@ -64,7 +64,7 @@ def create_gui():
     cb_cyrillic = tk.Checkbutton(tab_single, text="Проверка KKS на кириллицу", variable=check_cyrillic)
     cb_duplicates = tk.Checkbutton(tab_single, text="Проверка KKS на дубликаты", variable=check_duplicates)
     cb_connection = tk.Checkbutton(tab_single, text="Анализ поля 'Connection'", variable=check_connection)
-    cb_object_type = tk.Checkbutton(tab_single, text="Анализ поля 'Connection'", variable=check_object_type)
+    cb_object_type = tk.Checkbutton(tab_single, text="Анализ поля 'Object_type'", variable=check_object_type)
 
     cb_cyrillic.pack(anchor='w')
     cb_duplicates.pack(anchor='w')
