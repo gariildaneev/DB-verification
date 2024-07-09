@@ -42,22 +42,33 @@ def select_compare_files():
 def create_gui():
     root = tk.Tk()
     root.title("Проверка базы данных")
-    root.geometry("300x200")
+    root.geometry("400x300")
+
+    tab_control = ttk.Notebook(root)
+    
+    tab_single = ttk.Frame(tab_control)
+    tab_compare = ttk.Frame(tab_control)
+    
+    tab_control.add(tab_single, text='Анализ одного файла')
+    tab_control.add(tab_compare, text='Сравнение двух файлов')
+    
+    tab_control.pack(expand=1, fill='both')
 
     check_cyrillic = tk.BooleanVar(value=False)
     check_duplicates = tk.BooleanVar(value=False)
-    check_compare = tk.BooleanVar(value=False)
     check_connection = tk.BooleanVar(value=False)
+    check_compare = tk.BooleanVar(value=False)
 
-    cb_cyrillic = tk.Checkbutton(root, text="Проверка KKS на кириллицу", variable=check_cyrillic)
-    cb_duplicates = tk.Checkbutton(root, text="Проверка KKS на дубликаты", variable=check_duplicates)
-    cb_compare_check = tk.Checkbutton(root, text="Сравнение двух баз данных", variable=check_compare)
-    cb_connection = tk.Checkbutton(root, text="Анализ поля 'Connection'", variable=check_connection)
-    
-    cb_cyrillic.pack()
-    cb_duplicates.pack()
-    cb_compare_check.pack()
-    cb_connection.pack()
+    cb_cyrillic = tk.Checkbutton(tab_single, text="Проверка KKS на кириллицу", variable=check_cyrillic)
+    cb_duplicates = tk.Checkbutton(tab_single, text="Проверка KKS на дубликаты", variable=check_duplicates)
+    cb_connection = tk.Checkbutton(tab_single, text="Анализ поля 'Connection'", variable=check_connection)
+
+    cb_cyrillic.pack(anchor='w')
+    cb_duplicates.pack(anchor='w')
+    cb_connection.pack(anchor='w')
+
+    cb_compare_check = tk.Checkbutton(tab_compare, text="Сравнение двух баз данных", variable=check_compare)
+    cb_compare_check.pack(anchor='w')
     
     def on_process():
         if check_duplicates.get() or check_cyrillic.get() or check_connection.get():
@@ -79,6 +90,7 @@ def create_gui():
 
     btn_process = tk.Button(root, text="Запуск", command=on_process)
     btn_process.pack(expand=True)
+
 
     # Установка иконки для основного окна
     icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'icon.ico')
