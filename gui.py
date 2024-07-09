@@ -42,7 +42,7 @@ def select_compare_files():
 
 def create_gui():
     root = tk.Tk()
-    root.title("Проверка базы данных")
+    root.title("Проверка баз данных")
     root.geometry("400x300")
 
     tab_control = ttk.Notebook(root)
@@ -50,8 +50,8 @@ def create_gui():
     tab_single = ttk.Frame(tab_control)
     tab_compare = ttk.Frame(tab_control)
     
-    tab_control.add(tab_single, text='Анализ одного файла')
-    tab_control.add(tab_compare, text='Сравнение двух файлов')
+    tab_control.add(tab_single, text='Анализ БД')
+    tab_control.add(tab_compare, text='Сравнение двух БД')
     
     tab_control.pack(expand=1, fill='both')
 
@@ -70,8 +70,8 @@ def create_gui():
 
     cb_compare_check = tk.Checkbutton(tab_compare, text="Сравнение двух баз данных", variable=check_compare)
     cb_compare_check.pack(anchor='w')
-    
-    def on_process():
+
+    def on_process_single_file():
         if check_duplicates.get() or check_cyrillic.get() or check_connection.get():
             input_file, output_file = select_file()
             if input_file and output_file:
@@ -80,6 +80,11 @@ def create_gui():
                     messagebox.showinfo("Успех", "Отчет успешно создан!")
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
+
+    btn_process_single = tk.Button(tab_single, text="Запуск", command=on_process_single_file)
+    btn_process_single.pack(expand=True)
+
+    def on_process_compare_files():
         if check_compare.get():
             file1, file2, output_file = select_compare_files()
             if file1 and file2 and output_file:
@@ -89,8 +94,8 @@ def create_gui():
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
 
-    btn_process = tk.Button(root, text="Запуск", command=on_process)
-    btn_process.pack(expand=True)
+    btn_process_compare = tk.Button(tab_compare, text="Запуск", command=on_process_compare_files)
+    btn_process_compare.pack(expand=True)
 
 
     # Установка иконки для основного окна
