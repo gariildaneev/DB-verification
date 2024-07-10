@@ -4,7 +4,7 @@ from onedb_modules.duplicate_module import validate_duplicates
 from onedb_modules.cyrillic_module import validate_cyrillic
 from onedb_modules.connection_module import validate_connection
 from onedb_modules.object_type_module import validate_object_type
-from onedb_modules.connection_module import analyze_connection
+from onedb_modules.connection_analytics import analyze_connection
 
 def start_check_process(input_file, output_file, check_duplicates=True, check_cyrillic=True, check_connection=True, check_object_type=True, check_connection_analitycs=True):
     df = pd.read_excel(input_file)
