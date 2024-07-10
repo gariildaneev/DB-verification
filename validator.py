@@ -3,7 +3,7 @@ import xlsxwriter
 import re
 from utils import contains_cyrillic, highlight_cyrillic
 
-def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=True, check_connection=True, check_object_type=True):
+def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=True, check_connection=True, check_object_type=True, check_connection_analitycs=True):
     df = pd.read_excel(input_file)
     
     workbook = xlsxwriter.Workbook(output_file)
@@ -64,7 +64,7 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
             if connection_filled and not object_type_filled:
                 object_type_empty_errors.append(row)
 
-        ws_connection_errors = workbook.add_worksheet("CONNECTION-статистика")
+        ws_connection_errors = workbook.add_worksheet("Аналитика поля Connection")
         start_row = 0
 
         # Запись ошибок, где Connection пустое
@@ -102,12 +102,14 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
                 for c_idx, value in enumerate(row):
                     ws_connection_errors.write(start_row, c_idx, str(value) if pd.notna(value) else "")
                 start_row += 1
+
+    if check_connection_analitycs:
         # Анализ поля CONNECTION и подсчет количества KKS
         connection_counts = df[df['KKS'].notna() & df['KKS'].str.strip().astype(bool)]['CONNECTION'].value_counts().reset_index()
         connection_counts.columns = ['Connection', 'Кол-во']
         
         # Создание нового листа и запись данных с заголовками
-        ws_connection_analysis = workbook.add_worksheet("Анализ поля CONNECTION")
+        ws_connection_analysis = workbook.add_worksheet("CONNECTION-аналитика")
         
         # Форматирование таблицы
         border_format = workbook.add_format({'border': 1})
@@ -121,7 +123,6 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
         for r_idx, row in connection_counts.iterrows():
             for c_idx, value in enumerate(row):
                 ws_connection_analysis.write(r_idx + 1, c_idx, str(value) if pd.notna(value) else "", border_format)
-
 
     if check_object_type:
         # Проверка полей для OBJECT_TYPE == 'AI' или 'AO'
