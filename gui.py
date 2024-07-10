@@ -114,5 +114,3 @@ def create_gui():
     root.iconbitmap(icon_path)
 
     root.mainloop()
-
-create_gui()
