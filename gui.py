@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
 import os
-from validator import validate_kks
+from onedb_modules.modules_selector import start_check_process
 from comparer import compare_reports
 
 def select_file():
@@ -82,7 +82,7 @@ def create_gui():
             input_file, output_file = select_file()
             if input_file and output_file:
                 try:
-                    validate_kks(input_file, output_file, check_duplicates.get(), check_cyrillic.get(), check_connection.get(), check_object_type.get(), check_connection_analitycs.get())
+                    start_check_process(input_file, output_file, check_duplicates.get(), check_cyrillic.get(), check_connection.get(), check_object_type.get(), check_connection_analitycs.get())
                     messagebox.showinfo("Успех", "Отчет успешно создан!")
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
