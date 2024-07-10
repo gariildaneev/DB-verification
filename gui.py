@@ -60,22 +60,25 @@ def create_gui():
     check_connection = tk.BooleanVar(value=False)
     check_compare = tk.BooleanVar(value=False)
     check_object_type = tk.BooleanVar(value=False)
+    check_connection_analitycs = tk.BooleanVar(value=False)
 
     cb_cyrillic = tk.Checkbutton(tab_single, text="Проверка KKS на кириллицу", variable=check_cyrillic)
     cb_duplicates = tk.Checkbutton(tab_single, text="Проверка KKS на дубликаты", variable=check_duplicates)
     cb_connection = tk.Checkbutton(tab_single, text="Анализ поля 'Connection'", variable=check_connection)
     cb_object_type = tk.Checkbutton(tab_single, text="Анализ поля 'Object_type'", variable=check_object_type)
+    cb_conn_analitycs = tk.Checkbutton(tab_single, text="CONNECTION-аналитика", variable=check_connection_analitycs)
 
     cb_cyrillic.pack(anchor='w')
     cb_duplicates.pack(anchor='w')
     cb_connection.pack(anchor='w')
     cb_object_type.pack(anchor='w')
+    cb_conn_analitycs.pack(anchor='w')
 
     cb_compare_check = tk.Checkbutton(tab_compare, text="Сравнение двух баз данных", variable=check_compare)
     cb_compare_check.pack(anchor='w')
 
     def on_process_single_file():
-        if check_duplicates.get() or check_cyrillic.get() or check_connection.get() or check_object_type.get():
+        if check_duplicates.get() or check_cyrillic.get() or check_connection.get() or check_object_type.get() or check_connection_analitycs.get():
             input_file, output_file = select_file()
             if input_file and output_file:
                 try:
