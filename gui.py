@@ -29,7 +29,7 @@ def select_compare_files():
         file2 = filedialog.askopenfilename(
             title="Выберите второй файл (после изменений)",
             filetypes=[("Excel files", "*.xlsx")]
-        )
+    )
         if file2:
             output_file = filedialog.asksaveasfilename(
                 title="Сохранить отчет как",
@@ -62,20 +62,26 @@ def create_gui():
     check_object_type = tk.BooleanVar(value=False)
     check_connection_analitycs = tk.BooleanVar(value=False)
 
-    cb_cyrillic = tk.Checkbutton(tab_single, text="Проверка KKS на кириллицу", variable=check_cyrillic)
-    cb_duplicates = tk.Checkbutton(tab_single, text="Проверка KKS на дубликаты", variable=check_duplicates)
-    cb_connection = tk.Checkbutton(tab_single, text="Анализ поля 'Connection'", variable=check_connection)
-    cb_object_type = tk.Checkbutton(tab_single, text="Анализ поля 'Object_type'", variable=check_object_type)
-    cb_conn_analitycs = tk.Checkbutton(tab_single, text="CONNECTION-аналитика", variable=check_connection_analitycs)
+    def show_info(info_text):
+        def _show_info():
+            messagebox.showinfo("Информация", info_text)
+        return _show_info
 
-    cb_cyrillic.pack(anchor='w')
-    cb_duplicates.pack(anchor='w')
-    cb_connection.pack(anchor='w')
-    cb_object_type.pack(anchor='w')
-    cb_conn_analitycs.pack(anchor='w')
+    def create_checkbox_with_info(tab, text, variable, info_text):
+        frame = tk.Frame(tab)
+        checkbox = tk.Checkbutton(frame, text=text, variable=variable)
+        info_button = tk.Button(frame, text="?", command=show_info(info_text), width=2)
+        checkbox.pack(side="left", anchor='w')
+        info_button.pack(side="left", anchor='w')
+        frame.pack(anchor='w', pady=2)
 
-    cb_compare_check = tk.Checkbutton(tab_compare, text="Сравнение двух баз данных", variable=check_compare)
-    cb_compare_check.pack(anchor='w')
+    create_checkbox_with_info(tab_single, "Проверка KKS на кириллицу", check_cyrillic, "Проверяет наличие кириллических символов в поле KKS.")
+    create_checkbox_with_info(tab_single, "Проверка KKS на дубликаты", check_duplicates, "Проверяет, что все значения KKS уникальны.")
+    create_checkbox_with_info(tab_single, "Анализ поля 'Connection'", check_connection, "Анализирует поле 'Connection' и проверяет его на корректность.")
+    create_checkbox_with_info(tab_single, "Анализ поля 'Object_type'", check_object_type, "Проверяет поля для OBJECT_TYPE 'AI' или 'AO'.")
+    create_checkbox_with_info(tab_single, "CONNECTION-аналитика", check_connection_analitycs, "Показывает статистику по полю 'Connection'.")
+
+    create_checkbox_with_info(tab_compare, "Сравнение двух баз данных", check_compare, "Сравнивает две базы данных и выводит отчет о различиях.")
 
     def on_process_single_file():
         if check_duplicates.get() or check_cyrillic.get() or check_connection.get() or check_object_type.get() or check_connection_analitycs.get():
@@ -103,11 +109,10 @@ def create_gui():
     btn_process_compare = tk.Button(tab_compare, text="Запуск", command=on_process_compare_files)
     btn_process_compare.pack(expand=True)
 
-
     # Установка иконки для основного окна
     icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'icon.ico')
     root.iconbitmap(icon_path)
 
     root.mainloop()
 
-
+create_gui()
