@@ -64,7 +64,7 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
             if connection_filled and not object_type_filled:
                 object_type_empty_errors.append(row)
 
-        ws_connection_errors = workbook.add_worksheet("Анализ поля CONNECTION")
+        ws_connection_errors = workbook.add_worksheet("CONNECTION-статистика")
         start_row = 0
 
         # Запись ошибок, где Connection пустое
