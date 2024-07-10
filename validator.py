@@ -106,10 +106,21 @@ def validate_kks(input_file, output_file, check_duplicates=True, check_cyrillic=
         connection_counts = df[df['KKS'].notna() & df['KKS'].str.strip().astype(bool)]['CONNECTION'].value_counts().reset_index()
         connection_counts.columns = ['Connection', 'Кол-во']
         
-        ws_connection_analysis = workbook.add_worksheet("CONNECTION-статистика")
+        # Создание нового листа и запись данных с заголовками
+        ws_connection_analysis = workbook.add_worksheet("Анализ поля CONNECTION")
+        
+        # Форматирование таблицы
+        border_format = workbook.add_format({'border': 1})
+        
+        # Запись заголовков с обрамлением
+        headers = ['Connection', 'Кол-во']
+        for c_idx, header in enumerate(headers):
+            ws_connection_analysis.write(0, c_idx, header, border_format)
+        
+        # Запись данных с обрамлением
         for r_idx, row in connection_counts.iterrows():
             for c_idx, value in enumerate(row):
-                ws_connection_analysis.write(r_idx, c_idx, str(value) if pd.notna(value) else "")
+                ws_connection_analysis.write(r_idx + 1, c_idx, str(value) if pd.notna(value) else "", border_format)
 
 
     if check_object_type:
