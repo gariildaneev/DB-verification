@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import filedialog, messagebox
 import os
 from onedb_modules.modules_selector import start_check_process
-from comparer import compare_reports
+from comparer import compare_reports, compare_with_connection_schema
 
 def select_file():
     input_file = filedialog.askopenfilename(
@@ -22,12 +22,12 @@ def select_file():
 
 def select_compare_files():
     file1 = filedialog.askopenfilename(
-        title="Выберите первый файл (до изменений)",
+        title="Выберите базу данных",
         filetypes=[("Excel files", "*.xlsx *.xls")]
     )
     if file1:
         file2 = filedialog.askopenfilename(
-            title="Выберите второй файл (после изменений)",
+            title="Выберите БД для сравнения",
             filetypes=[("Excel files", "*.xlsx")]
     )
         if file2:
@@ -61,6 +61,7 @@ def create_gui():
     check_compare = tk.BooleanVar(value=False)
     check_object_type = tk.BooleanVar(value=False)
     check_connection_analitycs = tk.BooleanVar(value=False)
+    check_unknown_connection = tk.BooleanVar(value=False)
 
     def show_info(info_text):
         def _show_info():
@@ -82,6 +83,7 @@ def create_gui():
     create_checkbox_with_info(tab_single, "CONNECTION-аналитика", check_connection_analitycs, "Показывает статистику по полю 'Connection'.")
 
     create_checkbox_with_info(tab_compare, "Сравнение двух баз данных", check_compare, "Сравнивает две базы данных и выводит отчет о различиях.")
+    create_checkbox_with_info(tab_compare, "Сравнение двух баз данных", check_unknown_connection, "Сравнение значений поля 'CONNECTION' с базой схем подключения и выявление неизвестных типов подключений.")
 
     def on_process_single_file():
         if check_duplicates.get() or check_cyrillic.get() or check_connection.get() or check_object_type.get() or check_connection_analitycs.get():
@@ -96,7 +98,7 @@ def create_gui():
     btn_process_single = tk.Button(tab_single, text="Запуск", command=on_process_single_file)
     btn_process_single.pack(expand=True)
 
-    def on_process_compare_files():
+    def on_process_two_files():
         if check_compare.get():
             file1, file2, output_file = select_compare_files()
             if file1 and file2 and output_file:
@@ -105,8 +107,16 @@ def create_gui():
                     messagebox.showinfo("Успех", "Отчет о сравнении успешно создан!")
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
+        if check_unknown_connection.get():
+            file1, file2, output_file = compare_with_connection_schema()
+            if file1 and file2 and output_file:
+                try:
+                    compare_reports(file1, file2, output_file)
+                    messagebox.showinfo("Успех", "Отчет о сравнении успешно создан!")
+                except Exception as e:
+                    messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
 
-    btn_process_compare = tk.Button(tab_compare, text="Запуск", command=on_process_compare_files)
+    btn_process_compare = tk.Button(tab_compare, text="Запуск", command=on_process_two_files)
     btn_process_compare.pack(expand=True)
 
     # Установка иконки для основного окна
