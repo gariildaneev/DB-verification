@@ -83,7 +83,7 @@ def create_gui():
     create_checkbox_with_info(tab_single, "CONNECTION-аналитика", check_connection_analitycs, "Показывает статистику по полю 'Connection'.")
 
     create_checkbox_with_info(tab_compare, "Сравнение двух баз данных", check_compare, "Сравнивает две базы данных и выводит отчет о различиях.")
-    create_checkbox_with_info(tab_compare, "Сравнение двух баз данных", check_unknown_connection, "Сравнение значений поля 'CONNECTION' с базой схем подключения и выявление неизвестных типов подключений.")
+    create_checkbox_with_info(tab_compare, "Проверка схем подключений", check_unknown_connection, "Сравнение значений поля 'CONNECTION' с базой схем подключения и выявление неизвестных типов подключений.")
 
     def on_process_single_file():
         if check_duplicates.get() or check_cyrillic.get() or check_connection.get() or check_object_type.get() or check_connection_analitycs.get():
