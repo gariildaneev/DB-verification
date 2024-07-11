@@ -107,5 +107,29 @@ def compare_reports(file1, file2, output_file):
     for r_idx, row in enumerate(added_rows.itertuples(), start=1):
         for c_idx, value in enumerate(row[1:], start=0):
             ws_added.write(r_idx, c_idx, str(value) if pd.notna(value) else "")
+            
+def compare_with_connection_schema(db, connection_diag, output_file):
+
+    connection_diag_df = pd.read_excel(connection_diag)
+    unique_connections = connection_diag_df['CONNECTION'].unique()
+    
+    unknown_connections = df[~df['CONNECTION'].isin(unique_connections)]
+
+    if not unknown_connections.empty:
+        workbook = xlsxwriter.Workbook(output_file)
+        ws_unknown_connections = workbook.add_worksheet("Неизвестные типы подключения")
+        ws_unknown_connections.write(0, 0, "Строки с неизвестными типами подключения")
+        
+        for c_idx, col in enumerate(df.columns):
+            ws_unknown_connections.write(1, c_idx, col)
+        
+        for r_idx, row in enumerate(unknown_connections.itertuples(), start=2):
+            for c_idx, value in enumerate(row[1:], start=0):
+                if pd.isna(value) or value in [float('nan'), float('inf'), float('-inf')]:
+                    ws_unknown_connections.write(r_idx, c_idx, "")
+                elif isinstance(value, (int, float)):
+                    ws_unknown_connections.write_number(r_idx, c_idx, value)
+                else:
+                    ws_unknown_connections.write(r_idx, c_idx, str(value))
     
     workbook.close()
