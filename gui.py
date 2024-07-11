@@ -108,10 +108,10 @@ def create_gui():
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
         if check_unknown_connection.get():
-            file1, file2, output_file = compare_with_connection_schema()
+            file1, file2, output_file = select_compare_files()
             if file1 and file2 and output_file:
                 try:
-                    compare_reports(file1, file2, output_file)
+                    compare_with_connection_schema(file1, file2, output_file)
                     messagebox.showinfo("Успех", "Отчет о сравнении успешно создан!")
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
