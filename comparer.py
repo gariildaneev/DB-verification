@@ -110,9 +110,10 @@ def compare_reports(file1, file2, output_file):
             
 def compare_with_connection_schema(db, connection_diag, output_file):
 
+    df = pd.read_excel(db)
     connection_diag_df = pd.read_excel(connection_diag)
-    unique_connections = connection_diag_df['CONNECTION'].unique()
     
+    unique_connections = connection_diag_df['CONNECTION'].unique()
     unknown_connections = df[~df['CONNECTION'].isin(unique_connections)]
 
     if not unknown_connections.empty:
