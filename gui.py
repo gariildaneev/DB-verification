@@ -70,9 +70,9 @@ def create_gui():
         return _show_info
 
     def create_checkbox_with_info(tab, text, variable, info_text):
-        frame = tk.Frame(tab)
-        checkbox = tk.Checkbutton(frame, text=text, variable=variable)
-        info_button = tk.Button(frame, text="?", command=show_info(info_text), width=2)
+        frame = ttk.Frame(tab)
+        checkbox = ttk.Checkbutton(frame, text=text, variable=variable)
+        info_button = ttk.Button(frame, text="?", command=show_info(info_text), width=2)
         checkbox.pack(side="left", anchor='w')
         info_button.pack(side="left", anchor='w')
         frame.pack(anchor='w', pady=2)
@@ -96,7 +96,7 @@ def create_gui():
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
 
-    btn_process_single = tk.Button(tab_single, text="Запуск", command=on_process_single_file)
+    btn_process_single = ttk.Button(tab_single, text="Запуск", command=on_process_single_file)
     btn_process_single.pack(expand=True)
 
     def on_process_two_files():
@@ -117,7 +117,7 @@ def create_gui():
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
 
-    btn_process_compare = tk.Button(tab_compare, text="Запуск", command=on_process_two_files)
+    btn_process_compare = ttk.Button(tab_compare, text="Запуск", command=on_process_two_files)
     btn_process_compare.pack(expand=True)
 
     # Установка иконки для основного окна
