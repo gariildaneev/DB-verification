@@ -7,7 +7,7 @@ a = Analysis(
     pathex=['.'],
     binaries=[],
     datas=[('assets/icon.ico', 'assets'),
-           ('c:\hostedtoolcache\windows\python\3.8.10\x64\lib\site-packages', 'sv-ttk')],
+           ('c:\hostedtoolcache\windows\python\3.8.10\x64\lib\site-packages\sv_ttk', 'sv_ttk')],
     hiddenimports=['pandas', 'xlsxwriter'],
     hookspath=[],
     runtime_hooks=[],
