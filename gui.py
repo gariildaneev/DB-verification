@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
 import os
+import sv_ttk
 from onedb_modules.modules_selector import start_check_process
 from comparer import compare_reports, compare_with_connection_schema
 
@@ -123,4 +124,6 @@ def create_gui():
     icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'icon.ico')
     root.iconbitmap(icon_path)
 
+    sv_ttk.use_light_theme()
+    
     root.mainloop()
