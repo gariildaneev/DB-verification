@@ -3,7 +3,7 @@ import pandas
 from distribution_utils import write_section_headers, parse_fa_input
 from main_logic import process_discrete_values, process_analog_values
 
-def distribution_start(db, diagram, output, fa_rules, all_fa_values, num_DI, num_DO, num_AI, num_AO, max_modules, sections_per_cabinet):
+def distribution_start(db1, conn_diagram, output, fa_rules, all_fa_values, num_DI, num_DO, num_AI, num_AO, max_modules, sections_per_cabinet):
   
   # Initialize workbook and worksheet
   workbook = xlsxwriter.Workbook(output)
