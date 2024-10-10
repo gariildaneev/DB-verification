@@ -4,10 +4,9 @@ from distribution_utils import write_section_headers
 from main_logic import process_discrete_values, process_analog_values
 
 def distribution_start(db, diagram, output):
-  db1 = pd.read_excel(db)
-  conn_diagram = pd.read_excel(diagram)
+  
   # Initialize workbook and worksheet
-  workbook = xlsxwriter.Workbook('Cabinets.xlsx')
+  workbook = xlsxwriter.Workbook(output)
   worksheet = workbook.add_worksheet('Cab1')
   
   # Initialize starting positions
