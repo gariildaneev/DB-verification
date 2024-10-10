@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import pandas as pd
 from distribution_utils import get_unique_fa_values
+from distribution_start import distribution_start
 
 def create_input_fields(frame, db):
     custom_texts = [
@@ -64,10 +65,8 @@ def display_info():
 def process_data():
     # Get the string input
     fa_rules = string_input.get()
-
-    return fa_rules, all_fa_values, user_ints
-    
-    
+    num_DI, num_DO, num_AI, num_AO, max_modules, sections_per_cabinet = user_ints
+    distribution_start(fa_rules, all_fa_values, num_DI, num_DO, num_AI, num_AO, max_modules, sections_per_cabinet)
 
 def my_function(df1, df2, user_ints, user_string):
     # Custom processing logic here
