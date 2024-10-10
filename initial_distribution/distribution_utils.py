@@ -1,3 +1,6 @@
+import xslxwriter
+import pandas 
+
 def get_unique_fa_values(db1):
     # Assuming db1['FA'] holds FA values as integers or strings
     return sorted(db1['FA'].unique())  # Return sorted unique FA values
