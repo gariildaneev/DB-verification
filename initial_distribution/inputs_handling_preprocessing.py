@@ -67,8 +67,3 @@ def process_data():
     fa_rules = string_input.get()
     num_DI, num_DO, num_AI, num_AO, max_modules, sections_per_cabinet = user_ints
     distribution_start(db, diagram, output, fa_rules, all_fa_values, num_DI, num_DO, num_AI, num_AO, max_modules, sections_per_cabinet)
-
-def my_function(df1, df2, user_ints, user_string):
-    # Custom processing logic here
-    # Example: Returning the sum of integers and the string length
-    return sum(user_ints) + len(user_string)
