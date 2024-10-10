@@ -1,6 +1,6 @@
 import xlxwriter
 import pandas
-from distribution_utils import write_section_headers
+from distribution_utils import write_section_headers, parse_fa_input
 from main_logic import process_discrete_values, process_analog_values
 
 def distribution_start(db, diagram, output):
@@ -8,7 +8,13 @@ def distribution_start(db, diagram, output):
   # Initialize workbook and worksheet
   workbook = xlsxwriter.Workbook(output)
   worksheet = workbook.add_worksheet('Cab1')
-  
+
+  current_group = {
+    'DI': None,
+    'DO': None,
+    'AI': None,
+    'AO': None
+  }
   # Initialize starting positions
   current_row = 0
   current_col = 1
@@ -16,6 +22,8 @@ def distribution_start(db, diagram, output):
   current_section = 'A'
   analog_connection = []
   cabinet_num = 1
+
+  fa_groups, fa_order = parse_fa_input(fa_rules, all_fa_values)
   
   # Write the initial section header
   write_section_headers(worksheet, current_section + 'B', current_row, 0, max(num_DI, num_DO, num_AI, num_AO))
