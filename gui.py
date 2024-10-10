@@ -5,41 +5,7 @@ import os
 import sv_ttk
 from onedb_modules.modules_selector import start_check_process
 from comparer import compare_reports, compare_with_connection_schema
-
-def select_file():
-    input_file = filedialog.askopenfilename(
-        title="Выберите файл",
-        filetypes=[("Excel files", "*.xlsx *.xls")]
-    )
-    if input_file:
-        output_file = filedialog.asksaveasfilename(
-            title="Сохранить отчет как",
-            defaultextension=".xlsx",
-            filetypes=[("Excel files", "*.xlsx")]
-        )
-        if output_file:
-            return input_file, output_file
-    return None, None
-
-def select_compare_files():
-    file1 = filedialog.askopenfilename(
-        title="Выберите базу данных",
-        filetypes=[("Excel files", "*.xlsx *.xls")]
-    )
-    if file1:
-        file2 = filedialog.askopenfilename(
-            title="Выберите БД для сравнения",
-            filetypes=[("Excel files", "*.xlsx")]
-    )
-        if file2:
-            output_file = filedialog.asksaveasfilename(
-                title="Сохранить отчет как",
-                defaultextension=".xlsx",
-                filetypes=[("Excel files", "*.xlsx")]
-            )
-            if output_file:
-                return file1, file2, output_file
-    return None, None, None
+from files_handling import select_files
 
 def create_gui():
     root = tk.Tk()
@@ -90,7 +56,7 @@ def create_gui():
 
     def on_process_single_file():
         if check_duplicates.get() or check_cyrillic.get() or check_connection.get() or check_object_type.get() or check_connection_analitycs.get():
-            input_file, output_file = select_file()
+            input_file, output_file = select_files(num_files=1)
             if input_file and output_file:
                 try:
                     start_check_process(input_file, output_file, check_duplicates.get(), check_cyrillic.get(), check_connection.get(), check_object_type.get(), check_connection_analitycs.get())
@@ -101,9 +67,9 @@ def create_gui():
     btn_process_single = ttk.Button(tab_single, text="Запуск", command=on_process_single_file)
     btn_process_single.pack(expand=True)
 
-    def on_process_two_files():
+    def on_process_compare_files():
         if check_compare.get():
-            file1, file2, output_file = select_compare_files()
+            file1, file2, output_file = select_files(num_files=2)
             if file1 and file2 and output_file:
                 try:
                     compare_reports(file1, file2, output_file)
@@ -111,7 +77,7 @@ def create_gui():
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
         if check_unknown_connection.get():
-            file1, file2, output_file = select_compare_files()
+            file1, file2, output_file = select_files(num_files=2)
             if file1 and file2 and output_file:
                 try:
                     compare_with_connection_schema(file1, file2, output_file)
@@ -119,7 +85,7 @@ def create_gui():
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
 
-    btn_process_compare = ttk.Button(tab_compare, text="Запуск", command=on_process_two_files)
+    btn_process_compare = ttk.Button(tab_compare, text="Запуск", command=on_process_compare_files)
     btn_process_compare.pack(expand=True)
 
     # Установка иконки для основного окна
