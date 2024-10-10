@@ -66,7 +66,7 @@ def process_data():
     # Get the string input
     fa_rules = string_input.get()
     num_DI, num_DO, num_AI, num_AO, max_modules, sections_per_cabinet = user_ints
-    distribution_start(fa_rules, all_fa_values, num_DI, num_DO, num_AI, num_AO, max_modules, sections_per_cabinet)
+    distribution_start(db, diagram, output, fa_rules, all_fa_values, num_DI, num_DO, num_AI, num_AO, max_modules, sections_per_cabinet)
 
 def my_function(df1, df2, user_ints, user_string):
     # Custom processing logic here
