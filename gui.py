@@ -44,15 +44,17 @@ def select_compare_files():
 def create_gui():
     root = tk.Tk()
     root.title("Проверка баз данных")
-    root.geometry("400x300")
+    root.geometry("500x400")
 
     tab_control = ttk.Notebook(root)
     
     tab_single = ttk.Frame(tab_control)
     tab_compare = ttk.Frame(tab_control)
+    tab_distribution = ttk.Frame(tab_control)
     
     tab_control.add(tab_single, text='Анализ БД')
     tab_control.add(tab_compare, text='Сравнение двух БД')
+    tab_control.add(tab_distribution, text='Первичное распределение сигналов')
     
     tab_control.pack(expand=1, fill='both')
 
