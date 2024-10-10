@@ -1,4 +1,4 @@
-import xslxwriter
+import xlsxwriter
 import pandas 
 
 def get_unique_fa_values(db1):
