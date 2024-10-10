@@ -1,3 +1,5 @@
+import xlsxwriter
+from collections import deque
 from distribution_utils import write_values, write_module_headers, handle_module_overflow, fa_wise_distribution
 
 # Process DI and DO values
