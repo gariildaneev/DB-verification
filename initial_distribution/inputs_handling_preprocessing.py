@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import pandas as pd
+from distribution_utils import get_unique_fa_values
 
-def create_input_fields(frame):
+def create_input_fields(frame, db):
     custom_texts = [
         "Введите первое целое число:",
         "Введите второе целое число:",
@@ -44,8 +45,8 @@ def display_info():
         widget.destroy()
 
     # Display 'my information' from xlsx files (customize as per your files)
-    info = f"Information from first file: {df1.head()}\nInformation from second file: {df2.head()}"
-    info_label = ttk.Label(frame, text=info)
+    all_fa_values = get_unique_fa_values(db)
+    info_label = ttk.Label(frame, text=f"FA, присутствующие в базе данных: {all_fa_values}")
     info_label.grid(row=0, columnspan=2, padx=10, pady=5)
 
     # Proceed to take string input
@@ -62,12 +63,11 @@ def display_info():
 
 def process_data():
     # Get the string input
-    user_string = string_input.get()
+    fa_rules = string_input.get()
 
-    # Retrieve and process data (replace 'my_function' with your actual function)
-    result = my_function(df1, df2, user_ints, user_string)
+    return fa_rules, all_fa_values, user_ints
     
-    messagebox.showinfo("Process Complete", f"Data processed! Result: {result}")
+    
 
 def my_function(df1, df2, user_ints, user_string):
     # Custom processing logic here
