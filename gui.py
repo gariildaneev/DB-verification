@@ -1,11 +1,11 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import filedialog, messagebox
+from tkinter import ttk, filedialog, messagebox
 import os
 import sv_ttk
 from onedb_modules.modules_selector import start_check_process
 from comparer import compare_reports, compare_with_connection_schema
 from files_handling import select_files
+from initial_distribution.inputs_handling_preprocessing import create_input_fields
 
 def create_gui():
     root = tk.Tk()
@@ -92,7 +92,11 @@ def create_gui():
         file1, file2, output_file = select_files(num_files=2, titles_files=["Выберите БД", "Выберите Connection diagram"], titles_output="первичное распределение сигналов")
         if file1 and file2 and output_file:
                 try:
-                    compare_reports(file1, file2, output_file) %заменить
+                    db = pd.read_excel(file1)
+                    conn_diagram = pd.read_excel(file2)
+                    
+                    create_input_fields(tab_distribution, db) 
+                    
                     messagebox.showinfo("Успех", "Отчет о сравнении успешно создан!")
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
