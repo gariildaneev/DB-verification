@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import pandas as pd
-from distribution_utils import get_unique_fa_values
-from distribution_start import distribution_start
+from .distribution_utils import get_unique_fa_values
+from .distribution_start import distribution_start
 
 def create_input_fields(frame, db):
     custom_texts = [
