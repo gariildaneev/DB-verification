@@ -1,5 +1,5 @@
 import xlsxwriter
-import pandas 
+import pandas as pd
 
 def get_unique_fa_values(db1):
     # Assuming db1['FA'] holds FA values as integers or strings
