@@ -1,13 +1,7 @@
 from tkinter import filedialog
 
-def select_files(num_files=1, titles_files=None, title_output=None):
+def select_files(num_files, titles_files, title_output):
     files = []
-    
-    # Use default titles if none are provided
-    if titles_files is None:
-        titles_files = [f"Выберите файл {i+1}" for i in range(num_files)]
-    elif len(titles_files) != num_files:
-        raise ValueError("Number of titles must match the number of files.")
     
     # Loop to ask for the specified number of files with custom titles
     for i in range(num_files):
