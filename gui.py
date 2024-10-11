@@ -56,7 +56,7 @@ def create_gui():
 
     def on_process_single_file():
         if check_duplicates.get() or check_cyrillic.get() or check_connection.get() or check_object_type.get() or check_connection_analitycs.get():
-            input_file, output_file = select_files(num_files=1, titles_files=["Выберите БД"], titles_output="отчёт")
+            input_file, output_file = select_files(num_files=1, titles_files=["Выберите БД"], title_output="отчёт")
             if input_file and output_file:
                 try:
                     start_check_process(input_file, output_file, check_duplicates.get(), check_cyrillic.get(), check_connection.get(), check_object_type.get(), check_connection_analitycs.get())
@@ -69,7 +69,7 @@ def create_gui():
 
     def on_process_compare_files():
         if check_compare.get():
-            file1, file2, output_file = select_files(num_files=2, titles_files=["Выберите БД №1", "Выберите БД №2"], titles_output="отчёт")
+            file1, file2, output_file = select_files(num_files=2, titles_files=["Выберите БД №1", "Выберите БД №2"], title_output="отчёт")
             if file1 and file2 and output_file:
                 try:
                     compare_reports(file1, file2, output_file)
@@ -77,7 +77,7 @@ def create_gui():
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
         if check_unknown_connection.get():
-            file1, file2, output_file = select_files(num_files=2, titles_files=["Выберите БД", "Выберите Connection diagram"], titles_output="отчёт")
+            file1, file2, output_file = select_files(num_files=2, titles_files=["Выберите БД", "Выберите Connection diagram"], title_output="отчёт")
             if file1 and file2 and output_file:
                 try:
                     compare_with_connection_schema(file1, file2, output_file)
