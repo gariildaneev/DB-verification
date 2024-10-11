@@ -89,7 +89,7 @@ def create_gui():
     btn_process_compare.pack(expand=True)
 
     def on_process_initial_distribution():
-        file1, file2, output_file = select_files(num_files=2, titles_files=["Выберите БД", "Выберите Connection diagram"], titles_output="первичное распределение сигналов")
+        file1, file2, output_file = select_files(num_files=2, titles_files=["Выберите БД", "Выберите Connection diagram"], title_output="первичное распределение сигналов")
         if file1 and file2 and output_file:
                 try:
                     db = pd.read_excel(file1)
