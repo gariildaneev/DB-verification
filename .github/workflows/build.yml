@@ -18,7 +18,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller pandas xlsxwriter sv-ttk
+        pip install pyinstaller openpyxl pandas xlsxwriter sv-ttk
         
     - name: Build executable
       run: |
