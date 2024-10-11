@@ -17,7 +17,7 @@ def select_files(num_files, titles_files, title_output):
     
     # Ask for the output file after selecting input files
     output_file = filedialog.asksaveasfilename(
-        title="Сохранить " + title_output + " как",
+        title=f"Сохранить {title_output} как",
         defaultextension=".xlsx",
         filetypes=[("Excel files", "*.xlsx")]
     )
