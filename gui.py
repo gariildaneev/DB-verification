@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import os
+import pandas as pd
 import sv_ttk
 from onedb_modules.modules_selector import start_check_process
 from comparer import compare_reports, compare_with_connection_schema
