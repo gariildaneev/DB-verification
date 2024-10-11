@@ -1,5 +1,4 @@
 import xlsxwriter
-import pandas
 from .distribution_utils import write_section_headers, parse_fa_input
 from .main_logic import process_discrete_values, process_analog_values
 
