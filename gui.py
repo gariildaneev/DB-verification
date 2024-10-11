@@ -90,17 +90,21 @@ def create_gui():
     btn_process_compare.pack(expand=True)
 
     def on_process_initial_distribution():
+        # Select files and store them globally
+        global conn_diagram, output
         file1, file2, output_file = select_files(num_files=2, titles_files=["Выберите БД", "Выберите Connection diagram"], title_output="первичное распределение сигналов")
+        
         if file1 and file2 and output_file:
-                try:
-                    db = pd.read_excel(file1)
-                    conn_diagram = pd.read_excel(file2)
-                    
-                    create_input_fields(tab_distribution, db) 
-                    
-                    messagebox.showinfo("Успех", "Отчет о сравнении успешно создан!")
-                except Exception as e:
-                    messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
+            try:
+                db_data = pd.read_excel(file1)
+                conn_diagram = pd.read_excel(file2)
+                output = output_file
+                
+                # Start the next step of the process: creating input fields
+                create_input_fields(tab_distribution, db_data)
+            
+            except Exception as e:
+                messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
 
     btn_process_initial_distribution = ttk.Button(tab_distribution, text="Запуск", command=on_process_initial_distribution)
     btn_process_initial_distribution.pack(expand=True)
