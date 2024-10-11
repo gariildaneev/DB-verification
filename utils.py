@@ -1,3 +1,4 @@
+import openpyxl
 import re
 
 def contains_cyrillic(text):
