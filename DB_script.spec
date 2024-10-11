@@ -8,7 +8,7 @@ a = Analysis(
     binaries=[],
     datas=[('assets/icon.ico', 'assets'),
            ('c:/hostedtoolcache/windows/python/3.8.10/x64/lib/site-packages/sv_ttk', 'sv_ttk')],
-    hiddenimports=['pandas', 'xlsxwriter', 'sv_ttk'],
+    hiddenimports=['pandas', 'xlsxwriter', 'sv_ttk', 'openpyxl'],
     hookspath=[],
     runtime_hooks=[],
     excludes=[],
