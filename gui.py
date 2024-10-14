@@ -11,7 +11,7 @@ from initial_distribution.inputs_handling_preprocessing import create_input_fiel
 def create_gui():
     root = tk.Tk()
     root.title("Проверка баз данных")
-    root.geometry("500x400")
+    root.geometry("600x300")
 
     tab_control = ttk.Notebook(root)
     
