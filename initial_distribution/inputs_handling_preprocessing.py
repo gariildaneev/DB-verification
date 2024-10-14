@@ -29,22 +29,17 @@ def create_input_fields(frame, db_data):
     for widget in frame.winfo_children():
         widget.destroy()
     
-    input_vars = []
+      # List to store input variable references
+    global user_ints
+    user_ints = [tk.IntVar() for _ in range(6)]  # Create 6 IntVars
     
-    for i in range(6):  # Assuming 6 inputs
+    for i in range(6):
         label = ttk.Label(frame, text=custom_texts[i])
         label.grid(row=i, column=0, padx=5, pady=5)
         
         # Create an entry field for each integer input
-        input_var = tk.IntVar()  # You can use StringVar if you want more flexibility
-        entry = ttk.Entry(frame, textvariable=input_var)
+        entry = ttk.Entry(frame, textvariable=user_ints[i])
         entry.grid(row=i, column=1, padx=5, pady=5)
-        
-        input_vars.append(input_var)
-    
-    # Store the input variables globally
-    global user_ints
-    user_ints = input_vars
     
     submit_button = ttk.Button(frame, text="Подтвердить ввод", command=display_info)
     submit_button.grid(row=6, columnspan=2, pady=10)
