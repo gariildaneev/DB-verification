@@ -6,6 +6,7 @@ from .distribution_utils import write_values, write_module_headers, handle_modul
 # Process DI and DO values
 def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, worksheet, workbook, current_row, current_col, current_module, current_section, sections_per_cabinet, cabinet_num):
     db1.FA.astype(int)
+    nonlocal fa_order
     db1['FA'] = pd.Categorical(db1['FA'], categories=fa_order, ordered=True)
     db1_sorted = db1.sort_values(by=['CONNECTION', 'FA', 'ID']).reset_index(drop=True)
     di_counter = 1
