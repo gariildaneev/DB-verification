@@ -2,6 +2,7 @@ import xlsxwriter
 import pandas as pd
 from collections import deque
 from .distribution_utils import write_values, write_module_headers, handle_module_overflow, fa_wise_distribution
+from distribution_start import max_signals, fa_order
 
 # Process DI and DO values
 def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, worksheet, workbook, current_row, current_col, current_module, current_section, sections_per_cabinet, cabinet_num):
@@ -57,7 +58,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
                     di_counter += 1
                 di_counter = 1
                 do_next = True
-                current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'DI', sections_per_cabinet, cabinet_num, current_section)
+                current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'DI', sections_per_cabinet, cabinet_num, current_section)
 
 
 
@@ -69,7 +70,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
                 di_counter += 1
 
             di_counter = 1
-            current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'DI', sections_per_cabinet, cabinet_num, current_section)
+            current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'DI', sections_per_cabinet, cabinet_num, current_section)
 
         elif current_module % 3 != 0 and di_values.size > 0:
             di_completed.append((kks, connection, do_values, fa))
@@ -79,7 +80,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
                     write_module_headers(worksheet, workbook, current_row, current_col, current_module, 'DI')
                     di_counter = 1
                     do_next = True
-                    current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'DI', sections_per_cabinet, cabinet_num, current_section)
+                    current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'DI', sections_per_cabinet, cabinet_num, current_section)
 
 
                 write_values(worksheet, workbook, current_row + di_counter, current_col, di_value, kks, connection, 'DI', fa)
@@ -102,7 +103,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
                             do_counter += 1
                         do_counter = 1
                         do_next = False
-                        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
+                        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
 
 
                 if do_next and len(do_values) > 0 and do_counter + len(do_values) - 1 > num_DO:
@@ -113,7 +114,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
                         do_counter += 1
                     do_next = False
                     do_counter = 1
-                    current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
+                    current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
                     break
 
                 if do_next and len(do_values) > 0:
@@ -124,7 +125,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
                         if do_counter > num_DO:
                             write_module_headers(worksheet, workbook, current_row, current_col, current_module, 'DO')
                             do_next = False
-                            current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
+                            current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
                             do_counter = 1
 
 
@@ -136,7 +137,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
                 do_counter += 1
             do_next = False
             do_counter = 1
-            current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
+            current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
 
         # ПРОДОЛЖЕНИЕ МОДУЛЯ DI(ПОСЛЕ DO МОДУЛЯ) СО ЗНАЧЕНИЙ, КОТОРЫМ НЕ ХВАТИЛО МЕСТА В ПРЕДЫДУЩЕМ МОДУЛЕ
         if temp_kks_di:
@@ -153,7 +154,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
         while di_counter <= num_DI:
             write_values(worksheet, workbook, current_row + di_counter, current_col, '', '', '', 'DI')
             di_counter += 1
-        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'DI', sections_per_cabinet, cabinet_num, current_section)
+        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'DI', sections_per_cabinet, cabinet_num, current_section)
 
     while di_completed:
         do_kks, do_connection, do_values, do_fa = di_completed.popleft()
@@ -168,14 +169,14 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
                     write_values(worksheet, workbook, current_row + do_counter, current_col, '', '', '', 'DO')
                     do_counter += 1
                 do_counter = 1
-                current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
+                current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
 
 
         if len(do_values) > 0:
             for do_value in do_values:
                 if do_counter > num_DO:
                     write_module_headers(worksheet, workbook, current_row, current_col, current_module, 'DO')
-                    current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
+                    current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
                     do_counter = 1
 
                 write_values(worksheet, workbook, current_row + do_counter, current_col, do_value, do_kks, do_connection, 'DO', do_fa)
@@ -186,7 +187,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
         while do_counter <= num_DO:
             write_values(worksheet, workbook, current_row + do_counter, current_col, '', '', '', 'DO')
             do_counter += 1
-        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
+        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'DO', sections_per_cabinet, cabinet_num, current_section)
 
     return current_col, current_module, current_section, current_row, worksheet, cabinet_num
 
@@ -218,14 +219,14 @@ def process_analog_values(analog_connection, conn_diagram, num_AI, num_AO, max_m
                     write_values(worksheet, workbook, current_row + ai_counter, current_col, '', '', '', 'AI')
                     ai_counter += 1
                 ai_counter = 1
-                current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'AI', sections_per_cabinet, cabinet_num, current_section)
+                current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'AI', sections_per_cabinet, cabinet_num, current_section)
 
         if len(ai_values) > 0:
             for ai_value in ai_values:
                 if ai_counter > num_AI:
                     write_module_headers(worksheet, workbook, current_row, current_col, current_module, 'AI')
                     ai_counter = 1
-                    current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'AI', sections_per_cabinet, cabinet_num, current_section)
+                    current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'AI', sections_per_cabinet, cabinet_num, current_section)
 
                 write_values(worksheet, workbook, current_row + ai_counter, current_col, ai_value, kks, connection, 'AI', fa)
                 ai_counter += 1
@@ -235,7 +236,7 @@ def process_analog_values(analog_connection, conn_diagram, num_AI, num_AO, max_m
         while ai_counter <= num_AI:
             write_values(worksheet, workbook, current_row + ai_counter, current_col, '', '', '', 'AI')
             ai_counter += 1
-        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'AI', sections_per_cabinet, cabinet_num, current_section)
+        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'AI', sections_per_cabinet, cabinet_num, current_section)
 
     for kks, connection, ao_values, ao_fa in ao_storage:
 
@@ -249,13 +250,13 @@ def process_analog_values(analog_connection, conn_diagram, num_AI, num_AO, max_m
                     write_values(worksheet, workbook, current_row + ao_counter, current_col, '', '', '', 'AO')
                     ao_counter += 1
                 ao_counter = 1
-                current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'AO', sections_per_cabinet, cabinet_num, current_section)
+                current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'AO', sections_per_cabinet, cabinet_num, current_section)
 
         for ao_value in ao_values:
             if ao_counter > num_AO:
                 write_module_headers(worksheet, workbook, current_row, current_col, current_module, 'AO')
                 ao_counter = 1
-                current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'AO', sections_per_cabinet, cabinet_num, current_section)
+                current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'AO', sections_per_cabinet, cabinet_num, current_section)
 
             write_values(worksheet, workbook, current_row + ao_counter, current_col, ao_value, kks, connection, 'AO', ao_fa)
             ao_counter += 1
@@ -265,6 +266,6 @@ def process_analog_values(analog_connection, conn_diagram, num_AI, num_AO, max_m
         while ao_counter <= num_AO:
             write_values(worksheet, workbook, current_row + ao_counter, current_col, '', '', '', 'AO')
             ao_counter += 1
-        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, 'AO', sections_per_cabinet, cabinet_num, current_section)
+        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, 'AO', sections_per_cabinet, cabinet_num, current_section)
 
     return current_col, current_module, current_section, current_row, worksheet, cabinet_num
