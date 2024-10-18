@@ -2,7 +2,7 @@ import xlsxwriter
 import pandas as pd
 from collections import deque
 from .distribution_utils import write_values, write_module_headers, handle_module_overflow, fa_wise_distribution
-from distribution_start import max_signals, fa_order
+from .distribution_start import max_signals, fa_order
 
 # Process DI and DO values
 def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, worksheet, workbook, current_row, current_col, current_module, current_section, sections_per_cabinet, cabinet_num):
