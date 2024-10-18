@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import os
-import pandas as pd
 import sv_ttk
 from onedb_modules.modules_selector import start_check_process
 from comparer import compare_reports, compare_with_connection_schema
@@ -96,12 +95,8 @@ def create_gui():
         
         if file1 and file2 and output_file:
             try:
-                db_data = pd.read_excel(file1)
-                conn_diagram = pd.read_excel(file2)
-                output = output_file
-                
                 # Start the next step of the process: creating input fields
-                create_input_fields(tab_distribution, db_data)
+                create_input_fields(tab_distribution, file1, file2, output_file)
             
             except Exception as e:
                 messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
