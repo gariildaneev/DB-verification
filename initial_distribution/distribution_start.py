@@ -21,11 +21,12 @@ def distribution_start(db1, conn_diagram, output, fa_rules, all_fa_values, num_D
   current_section = 'A'
   analog_connection = []
   cabinet_num = 1
+  max_signals = max(num_DI, num_DO, num_AI, num_AO)
 
   fa_groups, fa_order = parse_fa_input(fa_rules, all_fa_values)
   
   # Write the initial section header
-  write_section_headers(worksheet, current_section + 'B', current_row, 0, max(num_DI, num_DO, num_AI, num_AO))
+  write_section_headers(worksheet, current_section + 'B', current_row, 0, max_signals)
   
   # Process DI and DO values
   current_col, current_module, current_section, current_row, worksheet, cabinet_num = process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, worksheet, workbook, current_row, current_col, current_module, current_section, sections_per_cabinet, cabinet_num)
