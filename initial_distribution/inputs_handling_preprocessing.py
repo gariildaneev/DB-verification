@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import pandas as pd
-from .distribution_utils import get_unique_fa_values
-from .distribution_start import distribution_start
+from initial_distribution.distribution_utils import get_unique_fa_values
+from initial_distribution.distribution_start import distribution_start
 from ..gui import output, conn_diagram
 
 # Global variables to store files and inputs across functions
