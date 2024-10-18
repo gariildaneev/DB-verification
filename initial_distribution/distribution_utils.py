@@ -1,8 +1,8 @@
 import xlsxwriter
 import pandas as pd
-import .main_logic
-import .distribution_start
-from .distribution_start import max_signals, fa_groups
+import initial_distribution.main_logic
+import initial_distribution.distribution_start
+from initial_distribution.distribution_start import max_signals, fa_groups
 
 def get_unique_fa_values(db1):
     # Assuming db1['FA'] holds FA values as integers or strings
