@@ -1,5 +1,8 @@
 import xlsxwriter
 import pandas as pd
+import main_logic
+import distribution_start
+from distribution_start import max_signals, fa_groups
 
 def get_unique_fa_values(db1):
     # Assuming db1['FA'] holds FA values as integers or strings
@@ -66,8 +69,7 @@ def handle_module_overflow(current_col, current_module, max_modules, row, max_va
     current_col += 3
     current_module += 1
     if current_module > max_modules:
-        global do_next
-        do_next = False
+        main_logic.do_next = False
         current_section = chr(ord(current_section) + 1)
         row += max_values + 1
         current_col = 1
@@ -81,7 +83,6 @@ def handle_module_overflow(current_col, current_module, max_modules, row, max_va
     return current_col, current_module, row, worksheet, cabinet_num, current_section
 
 def fa_wise_distribution(current_fa, fa, counter, num, worksheet, workbook, current_row, current_col, current_module, module_type, cabinet_num, current_section):
-    global do_next
 
     group_found = False
     if current_fa != fa:
@@ -89,22 +90,22 @@ def fa_wise_distribution(current_fa, fa, counter, num, worksheet, workbook, curr
         for group in fa_groups:
             if current_fa in group:
                 group_found = True
-                if current_group[module_type] is None or current_group[module_type] != group:
+                if distribution_start.current_group[module_type] is None or distribution_start.current_group[module_type] != group:
                     # New group encountered, switch module
-                    current_group[module_type] = group
+                    distribution_start.current_group[module_type] = group
                     if counter > 1:
                         write_module_headers(worksheet, workbook, current_row, current_col, current_module, module_type)
                         while counter <= num:
                             write_values(worksheet, workbook, current_row + counter, current_col, '', '', '', module_type)
                             counter += 1
                         if module_type == 'DI':
-                            do_next = True
+                            main_logic.do_next = True
                         else:
-                            do_next = False
+                            main_logic.do_next = False
                         counter = 1
-                        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max(num_DI, num_DO, num_AI, num_AO), worksheet, workbook, module_type, sections_per_cabinet, cabinet_num, current_section)
+                        current_col, current_module, current_row, worksheet, cabinet_num, current_section = handle_module_overflow(current_col, current_module, max_modules, current_row, max_signals, worksheet, workbook, module_type, sections_per_cabinet, cabinet_num, current_section)
                 break
 
         if not group_found:
             raise ValueError(f"FA value {current_fa} not found in user input")
-    return current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_fa, counter, do_next
+    return current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_fa, counter
