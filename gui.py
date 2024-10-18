@@ -5,7 +5,7 @@ import os
 import sv_ttk
 from onedb_modules.modules_selector import start_check_process
 from comparer import compare_reports, compare_with_connection_schema
-
+# haha
 def select_file():
     input_file = filedialog.askopenfilename(
         title="Выберите файл",
