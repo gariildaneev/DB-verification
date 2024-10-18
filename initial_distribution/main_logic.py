@@ -44,7 +44,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
 
         temp_kks_di = (kks, connection, di_values, do_values, fa)
 
-        current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_di_fa, di_counter, do_next = fa_wise_distribution(current_di_fa, fa, di_counter, num_DI, worksheet, workbook, current_row, current_col, current_module, 'DI', cabinet_num, current_section)
+        current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_di_fa, di_counter = fa_wise_distribution(current_di_fa, fa, di_counter, num_DI, worksheet, workbook, current_row, current_col, current_module, 'DI', cabinet_num, current_section)
 
 
         if current_di_connection != connection:
@@ -92,7 +92,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
                 do_kks, do_connection, do_values, do_fa = di_completed.popleft()
                 di_completed.appendleft((do_kks, do_connection, do_values, do_fa))
 
-                current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_do_fa, do_counter, do_next = fa_wise_distribution(current_do_fa, do_fa, do_counter, num_DO, worksheet, workbook, current_row, current_col, current_module, 'DO', cabinet_num, current_section)
+                current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_do_fa, do_counter = fa_wise_distribution(current_do_fa, do_fa, do_counter, num_DO, worksheet, workbook, current_row, current_col, current_module, 'DO', cabinet_num, current_section)
 
                 if current_do_connection != do_connection:
                     current_do_connection = do_connection
@@ -159,7 +159,7 @@ def process_discrete_values(db1, conn_diagram, num_DI, num_DO, max_modules, work
     while di_completed:
         do_kks, do_connection, do_values, do_fa = di_completed.popleft()
 
-        current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_do_fa, do_counter, do_next = fa_wise_distribution(current_do_fa, do_fa, do_counter, num_DO, worksheet, workbook, current_row, current_col, current_module, 'DO', cabinet_num, current_section)
+        current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_do_fa, do_counter = fa_wise_distribution(current_do_fa, do_fa, do_counter, num_DO, worksheet, workbook, current_row, current_col, current_module, 'DO', cabinet_num, current_section)
 
         if current_do_connection != do_connection:
             current_do_connection = do_connection
@@ -209,7 +209,7 @@ def process_analog_values(analog_connection, conn_diagram, num_AI, num_AO, max_m
             ao_storage.append((kks, connection, ao_values, fa))
         #FIX THAT
 
-        current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_ai_fa, ai_counter, do_next = fa_wise_distribution(current_ai_fa, fa, ai_counter, num_AI, worksheet, workbook, current_row, current_col, current_module, 'AI', cabinet_num, current_section)
+        current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_ai_fa, ai_counter = fa_wise_distribution(current_ai_fa, fa, ai_counter, num_AI, worksheet, workbook, current_row, current_col, current_module, 'AI', cabinet_num, current_section)
 
         if current_connection != connection:
             current_connection = connection
@@ -240,7 +240,7 @@ def process_analog_values(analog_connection, conn_diagram, num_AI, num_AO, max_m
 
     for kks, connection, ao_values, ao_fa in ao_storage:
 
-        current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_ao_fa, ao_counter, do_next = fa_wise_distribution(current_ao_fa, ao_fa, ao_counter, num_AO, worksheet, workbook, current_row, current_col, current_module, 'AO', cabinet_num, current_section)
+        current_col, current_module, current_row, worksheet, cabinet_num, current_section, current_ao_fa, ao_counter = fa_wise_distribution(current_ao_fa, ao_fa, ao_counter, num_AO, worksheet, workbook, current_row, current_col, current_module, 'AO', cabinet_num, current_section)
 
         if current_connection != connection:
             current_connection = connection
