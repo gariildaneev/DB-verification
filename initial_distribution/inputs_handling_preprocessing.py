@@ -3,6 +3,7 @@ from tkinter import ttk, filedialog, messagebox
 import pandas as pd
 from .distribution_utils import get_unique_fa_values
 from .distribution_start import distribution_start
+from gui import output, conn_diagram
 
 # Global variables to store files and inputs across functions
 db = None
