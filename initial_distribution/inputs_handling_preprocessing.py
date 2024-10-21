@@ -13,7 +13,7 @@ user_ints = []
 string_input = None
 all_fa_values = None
 
-def create_input_fields(frame, db_data):
+def create_input_fields(frame, database, diagram, output_file):
     global db
     db = db_data  # Store the database file globally
     
